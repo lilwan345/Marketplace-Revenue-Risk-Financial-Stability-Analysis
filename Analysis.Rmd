@@ -1,5 +1,7 @@
 ---
 title: "Marketplace Revenue Risk & Financial Stability Analysis"
+author: "Liyuan Wan"
+date: "`r Sys.Date()`"
 output:
   html_document:
     theme: flatly
@@ -7,8 +9,6 @@ output:
     toc_float: true
     code_folding: hide
 ---
-
-# Marketplace Revenue Risk Analysis
 
 ## Setup
 
@@ -19,6 +19,7 @@ library(DBI)
 library(RPostgres)
 library(ggplot2)
 library(dplyr)
+library(ineq)
 
 con <- dbConnect(
   RPostgres::Postgres(),
@@ -29,77 +30,84 @@ con <- dbConnect(
   password = Sys.getenv("PG_PASSWORD")
 )
 ```
+
 ## Data Loading
 
 Loading the datasets from the database for analysis.
+
 ```{r data-loading}
-monthly <- dbReadTable(con, "monthly_revenue")
+monthly  <- dbReadTable(con, "monthly_revenue")
 customer <- dbReadTable(con, "customer_revenue_decile")
-payment <- dbReadTable(con, "order_payment_structure")
+payment  <- dbReadTable(con, "order_payment_structure")
+state    <- dbReadTable(con, "state_revenue")
 ```
 
-
+---
 
 ## Revenue Stability
 
-This section evaluates the volatility of monthly revenue and short-term growth dynamics.
+This section evaluates the volatility of monthly revenue and short-term growth dynamics to assess how predictable cash flows are over time.
+
 ```{r}
-sd_rev <- sd(monthly$monthly_revenue, na.rm = TRUE)
+sd_rev   <- sd(monthly$monthly_revenue, na.rm = TRUE)
 mean_rev <- mean(monthly$monthly_revenue, na.rm = TRUE)
-cv_rev <- sd_rev / mean_rev
+cv_rev   <- sd_rev / mean_rev
 
 cv_rev
 ```
-The coefficient of variation indicates moderate revenue volatility, showing that revenue is growing but not fully stable.
+
+The coefficient of variation (CV = `r round(cv_rev, 2)`) indicates moderate revenue volatility. While the overall trend is upward, revenue is not yet stable enough for reliable short-term forecasting — a meaningful consideration for cash flow planning and budgeting.
 
 ```{r}
 monthly <- monthly %>%
   arrange(month) %>%
   mutate(
-    mom_growth = (monthly_revenue - lag(monthly_revenue)) /
-      lag(monthly_revenue)
+    mom_growth = (monthly_revenue - lag(monthly_revenue)) / lag(monthly_revenue)
   )
+
 monthly_growth <- monthly %>%
   filter(!is.na(mom_growth))
 
 sd(monthly$mom_growth, na.rm = TRUE)
 ```
-The month-on-month growth rate shows significant fluctuations, showing a unstable performance in the short term.
+
+Month-over-month growth shows high standard deviation, reflecting an unstable short-term performance pattern. Large swings between consecutive months suggest the business has not yet achieved consistent growth momentum.
 
 ```{r warning=FALSE}
 ggplot(monthly, aes(x = month, y = monthly_revenue)) +
   geom_line(linewidth = 1.2, color = "#2C3E50") +
   geom_point(size = 2, color = "#1ABC9C") +
   labs(
-    title = "Monthly Revenue Trend",
+    title = "Monthly Revenue Trend (2017–2018)",
     x = "Month",
-    y = "Revenue"
+    y = "Revenue (BRL)"
   ) +
   theme_minimal()
 ```
 
-The trend shows a overall revenue growth, with a noticeable spike and some volatility near the later period.
+Revenue grew steadily through 2017, with a sharp spike in late 2017 followed by elevated but volatile performance through 2018. The spike warrants further investigation — it may reflect a seasonal event or promotional campaign rather than organic growth.
 
 ```{r}
 ggplot(monthly_growth, aes(x = month, y = mom_growth)) +
   geom_col(fill = "#3498DB") +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(
-    title = "Month-over-Month Revenue Growth",
+    title = "Month-over-Month Revenue Growth Rate",
     x = "Month",
     y = "MoM Growth Rate"
   ) +
   theme_minimal()
 ```
 
-MoM growth is highly uneven, with strong positive jumps and several negative months.
+MoM growth is highly uneven — several months of strong positive growth are offset by multiple months of decline. This pattern is consistent with a marketplace still in an early growth stage, subject to demand shocks and inconsistent order volume.
+
+---
 
 ## Geographic Concentration
 
-This section examines the degree of geographic concentration in revenue and the potential risk of over-reliance on specific regions.
-```{r}
-state <- dbReadTable(con, "state_revenue")
+This section examines the degree of geographic concentration in revenue and the risk of over-reliance on specific regions.
 
+```{r}
 state <- state %>%
   arrange(desc(total_revenue)) %>%
   mutate(
@@ -120,29 +128,27 @@ ggplot(state, aes(x = reorder(customer_state, revenue_share),
   theme_minimal()
 ```
 
-Revenue is highly concentrated in a few key states, with São Paulo (SP) alone contributing approximately 37% of total revenue, followed by Rio de Janeiro (RJ) and Minas Gerais (MG) at around 13% and 12%, respectively.
+Revenue is highly concentrated in a small number of states. São Paulo (SP) alone accounts for approximately 37% of total revenue, followed by Rio de Janeiro (RJ) at ~13% and Minas Gerais (MG) at ~12%. The remaining 24 states collectively contribute less than 40%, indicating that the marketplace's financial performance is closely tied to conditions in Southeast Brazil.
 
 ```{r}
 hhi <- sum(state$revenue_share^2)
 hhi
 ```
-The HHI value is approximately 0.18, indicating a moderate level of geographic concentration. This suggests that revenue is not fully diversified and still relies on a few key regions.
 
+The Herfindahl-Hirschman Index (HHI = `r round(hhi, 3)`) reflects a moderate level of geographic concentration. While the market is not monopolistically concentrated, the heavy dependence on SP introduces regional risk — any economic disruption, logistics issue, or regulatory change in São Paulo could materially impact overall revenue.
+
+---
 
 ## Customer Concentration
 
 This section measures how revenue is distributed across customers and whether a small share of customers contributes a disproportionate share of revenue.
 
 ```{r}
-customer <- dbReadTable(con, "customer_revenue_decile")
-```
-
-```{r}
 decile_summary <- customer %>%
   group_by(decile) %>%
   summarise(
     customer_count = n(),
-    total_revenue = sum(total_revenue),
+    total_revenue  = sum(total_revenue),
     .groups = "drop"
   ) %>%
   arrange(decile) %>%
@@ -156,20 +162,20 @@ ggplot(decile_summary, aes(x = factor(decile), y = revenue_share)) +
   geom_col(fill = "#9B59B6") +
   labs(
     title = "Revenue Share by Customer Decile",
-    x = "Customer Decile",
-    y = "Revenue Share"
+    x    = "Customer Decile (1 = Highest Spenders)",
+    y    = "Revenue Share"
   ) +
   theme_minimal()
 ```
 
-Revenue is concentrated in the top customer deciles. The first decile alone contributes about 38% of total revenue, while the top three deciles together contribute roughly 64%, indicating a strong dependence on a relatively small group of high-value customers.
+Revenue is heavily concentrated among the highest-value customers. The top decile alone contributes approximately 38% of total revenue, and the top three deciles together account for roughly 64%. This steep drop-off across deciles signals a high degree of customer dependency — losing a small number of high-value customers could have an outsized impact on total revenue.
 
 ```{r}
 customer_sort <- customer %>%
   arrange(total_revenue) %>%
   mutate(
     cum_customer = row_number() / n(),
-    cum_revenue = cumsum(total_revenue) / sum(total_revenue)
+    cum_revenue  = cumsum(total_revenue) / sum(total_revenue)
   )
 ```
 
@@ -185,35 +191,31 @@ ggplot(customer_sort, aes(x = cum_customer, y = cum_revenue)) +
   theme_minimal()
 ```
 
-The Lorenz curve bends far away from the equality line, showing clear inequality in revenue contribution across customers.
+The Lorenz curve deviates substantially from the line of perfect equality, confirming a highly unequal distribution of revenue across the customer base.
 
 ```{r}
-library(ineq)
 gini <- ineq(customer$total_revenue, type = "Gini")
 gini
 ```
 
-The Gini coefficient is approximately 0.475, which suggests a moderate-to-high level of customer concentration.
+The Gini coefficient of `r round(gini, 3)` indicates a moderate-to-high level of customer revenue inequality. This is consistent with typical marketplace dynamics where a small cohort of repeat, high-value buyers drives the majority of revenue — but also represents a concentration risk if those customers churn.
 
+---
 
 ## Liquidity Risk
 
-This section evaluates whether payment structure could create cash flow timing risk.
-
-```{r}
-payment <- dbReadTable(con, "order_payment_structure")
-```
+This section evaluates whether the payment structure could create cash flow timing risk for the business.
 
 ```{r}
 payment_summary <- payment %>%
   group_by(payment_type) %>%
   summarise(
-    order_count = n(),
+    order_count   = n(),
     total_revenue = sum(order_total),
     .groups = "drop"
   ) %>%
   mutate(
-    order_share = order_count / sum(order_count),
+    order_share   = order_count / sum(order_count),
     revenue_share = total_revenue / sum(total_revenue)
   )
 ```
@@ -229,7 +231,7 @@ ggplot(payment_summary, aes(x = payment_type, y = revenue_share)) +
   theme_minimal()
 ```
 
-Installment payments account for a larger share of revenue than one-time payments, showing that cash flow may be collected over a longer period rather than immediately.
+Installment payments account for a significantly larger share of revenue than one-time payments. This means cash is collected incrementally over time rather than upfront, creating a structural gap between when revenue is recognized and when it is actually received.
 
 ```{r}
 weighted_installment <- sum(payment$max_installments * payment$order_total) /
@@ -238,12 +240,22 @@ weighted_installment <- sum(payment$max_installments * payment$order_total) /
 weighted_installment
 ```
 
-The weighted average installment count is approximately 4.12, which implys that installment-based purchases are actually common and may increase liquidity timing risk.
+The revenue-weighted average installment count is approximately `r round(weighted_installment, 2)`, meaning that on average, each order's payment is spread across more than four installments. This installment-heavy structure implies that a meaningful portion of recognized revenue will only be collected weeks to months after the transaction — a liquidity timing risk that should be reflected in working capital planning.
 
-## Key Findings 
-- Revenue shows moderate volatility, indicating instability in short-term performance. 
-- Revenue is geographically concentrated, with São Paulo contributing approximately 37% of total revenue. 
-- Customer concentration is significant, with the top decile contributing about 38% of total revenue and a Gini coefficient of around 0.47. 
-- Payment structure indicates liquidity risk, with installment payments dominating revenue and an average installment count of approximately 4.1. 
+---
 
-Overall, the business faces moderate financial risk due to concentration and cash flow timing factors.
+## Key Findings & Business Implications
+
+**1. Revenue Stability — Moderate Risk**
+Revenue volatility (CV = 0.42) and highly uneven MoM growth suggest the business has not yet reached a stable growth trajectory. Short-term cash flow forecasting should incorporate scenario buffers, and management should investigate the late-2017 spike for replicable drivers.
+
+**2. Geographic Concentration — Moderate Risk**
+São Paulo contributes 37% of revenue (HHI = 0.18), creating meaningful exposure to a single region. Prioritizing customer acquisition in underrepresented states — particularly RJ, MG, and RS — could reduce concentration risk while capturing untapped demand.
+
+**3. Customer Concentration — Moderate-to-High Risk**
+With a Gini coefficient of 0.475 and the top decile driving 38% of revenue, the business is highly dependent on a small number of high-value customers. Retention strategies targeting the top 3 deciles and efforts to grow mid-tier customer spend would meaningfully reduce this risk.
+
+**4. Liquidity Risk — Moderate Risk**
+An average of 4.12 installments per order creates a lag between revenue recognition and cash collection. The business should maintain sufficient working capital reserves and consider the timing implications when planning for operational expenditures.
+
+**Overall Assessment:** The marketplace faces moderate financial risk driven primarily by revenue concentration (geographic and customer) and deferred cash collection. These risks are manageable but should be actively monitored as the business scales.
