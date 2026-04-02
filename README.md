@@ -1,52 +1,70 @@
 # Marketplace Revenue Risk & Financial Stability Analysis
 
-## Overview
+> Quantifying financial concentration and liquidity risk across 100,000+ e-commerce transactions using SQL and R.
 
-This project analyzes the financial stability of marketplace revenue using real-world e-commerce data. 
+📊 **[View Full Interactive Report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)**
 
-The analysis focuses on four key dimensions: revenue volatility, geographic concentration, customer concentration, and liquidity risk.
+---
 
+## What This Project Does
 
-## Data Context
+This project builds a financial risk assessment framework on top of the Brazilian E-Commerce Public Dataset (Olist, 2016–2018). It identifies and quantifies four dimensions of revenue risk that matter to marketplace businesses:
 
-The analysis is based on the Brazilian E-Commerce Public Dataset by Olist, which contains approximately 100,000 orders from 2016 to 2018.
+| Risk Dimension | Key Metric | Finding |
+|---|---|---|
+| Revenue Stability | CV = 0.42 | Moderate volatility; unstable short-term growth |
+| Geographic Concentration | HHI = 0.18 | São Paulo alone drives 37% of total revenue |
+| Customer Concentration | Gini = 0.475 | Top 10% of customers contribute 38% of revenue |
+| Liquidity Risk | Avg. Installments = 4.12 | Installment-heavy structure delays cash collection |
 
-This project focuses on three core tables:
-- Orders data (order-level information)
-- Customer data (customer identifiers and location)
-- Payment data (payment types and installment structure)
+**Bottom line:** The business faces moderate financial risk driven by revenue concentration and deferred cash flow — insights that directly inform customer diversification and regional expansion strategy.
 
-These datasets are combined to analyze revenue from multiple perspectives, including time, geography, customer segments, and payment behavior.
-
-The dataset reflects real-world e-commerce operations, making it suitable for evaluating financial stability and business risk.
-
+---
 
 ## Key Findings
 
-- Revenue shows a moderate volatility, showing instability in short-term.
-- Revenue is geographically concentrated, with Sao Paulo contributing approximately 37% of total revenue.
-- Customer concentration is significant, with the top decile contributing about 38% of total revenue and a Gini coefficient of around 0.47.
-- Payment structure indicates liquidity risk, with installment payments dominating revenue and an average installment count of approximately 4.1.
+- **Revenue is volatile short-term**: CV of 0.42 and highly uneven month-over-month growth signal unstable performance, despite an overall upward trend from 2017 to 2018.
+- **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI of 0.18 indicates moderate but meaningful concentration risk.
+- **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top 3 deciles contribute ~64%. The Lorenz curve and Gini coefficient (0.475) confirm high inequality.
+- **Installment payments create liquidity lag**: Over 60% of revenue comes from installment orders, with an average of 4.12 installments per order — meaning cash is collected gradually, not upfront.
 
-Overall, the business faces a moderate financial risk driven by revenue concentration and cash flow timing constraints.
+---
 
+## Tools & Methods
 
-## Methodology
+**SQL (PostgreSQL)**
+- Constructed modular views for financial orders, state revenue, customer deciles, and payment structure
+- Applied window functions (NTILE, SUM OVER) for segmentation and ranking
 
-- SQL was used to extract and prepare data from relational tables
-- R was used for data processing, analysis, and visualization
-- Key metrics include CV, HHI, Gini coefficient, and weighted installment count
+**R (RMarkdown)**
+- Calculated CV, HHI, Gini coefficient, and weighted installment count
+- Visualized trends with ggplot2: line charts, bar charts, and Lorenz curve
 
+---
 
 ## Project Structure
 
-- Analysis.Rmd: Main analysis report
-- Analysis.html: Rendered report
-- Data/: Raw datasets
-- R/: R scripts
-- SQL/: SQL queries
+```
+├── Analysis.Rmd          # Main analysis (R Markdown source)
+├── Analysis.html         # Rendered interactive report
+├── project.sql           # SQL views for data preparation
+├── analysis.R            # Standalone R script
+├── Data/
+│   ├── olist_customers_dataset.csv
+│   ├── olist_orders_dataset.csv
+│   └── olist_order_payments_dataset.csv
+```
 
+---
 
-## Report
+## Data Source
 
-View full report: https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/
+[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — ~100,000 orders from 2016 to 2018, covering order details, customer locations, and payment structures.
+
+> **Note:** This dataset reflects 2016–2018 Brazilian e-commerce operations. Findings are specific to this time period and market context.
+
+---
+
+## Author
+
+**Liyuan Wan** · [GitHub](https://github.com/lilwan345)
