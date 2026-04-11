@@ -17,8 +17,7 @@ This project builds a financial risk assessment framework on top of the Brazilia
 | Customer Concentration | Gini = 0.475 | Top 10% of customers contribute 38% of revenue |
 | Liquidity Risk | Avg. Installments = 4.12 | Installment-heavy structure delays cash collection |
 
-**Bottom line:** The business faces moderate financial risk driven by revenue concentration and deferred cash flow — insights that directly inform customer diversification and regional expansion strategy.
-
+**Bottom line:** Based on findings, three targeted interventions are recommended: promotional calendar optimization to address revenue volatility, seller recruitment in MG and PR to reduce geographic concentration, and a loyalty program targeting the top customer decile to stabilize high-value revenue.
 ---
 
 ## Key Findings
