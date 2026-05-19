@@ -2,7 +2,8 @@
 
 > Quantifying financial concentration and liquidity risk across 100,000+ e-commerce transactions using SQL and R.
 
-**Client dashboard package:** [`tableau_data/`](tableau_data/) + [Tableau Dashboard Blueprint](docs/tableau_dashboard_blueprint.md)  
+**Client dashboard prototype:** [Open Dashboard](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)  
+**Tableau dashboard package:** [`tableau_data/`](tableau_data/) + [Tableau Dashboard Blueprint](docs/tableau_dashboard_blueprint.md)  
 **Technical report:** [View Full Interactive Report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)
 
 ---
@@ -27,6 +28,7 @@ The repository includes a Tableau-ready dashboard package designed for non-techn
 
 | Asset | Purpose |
 |---|---|
+| [`dashboard.html`](dashboard.html) | Client-facing interactive dashboard prototype for GitHub Pages |
 | [`export_tableau_data.R`](export_tableau_data.R) | Rebuilds the dashboard CSV files directly from the raw Olist datasets |
 | [`tableau_data/monthly_revenue.csv`](tableau_data/monthly_revenue.csv) | Monthly revenue trend, MoM growth, and volatility flags |
 | [`tableau_data/state_revenue.csv`](tableau_data/state_revenue.csv) | State-level revenue concentration and ranking |
@@ -82,6 +84,7 @@ Rscript export_tableau_data.R
 ```
 ├── Analysis.Rmd          # Main analysis (R Markdown source)
 ├── index.html            # Rendered GitHub Pages report
+├── dashboard.html        # Client-facing dashboard prototype
 ├── project.sql           # SQL views for data preparation
 ├── analysis.R            # Standalone R script
 ├── export_tableau_data.R # Tableau CSV export script

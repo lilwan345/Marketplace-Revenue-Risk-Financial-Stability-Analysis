@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marketplace Revenue Risk Dashboard</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #5e6b78;
+      --line: #d9e1e8;
+      --panel: #ffffff;
+      --bg: #f5f7fa;
+      --teal: #147d7e;
+      --blue: #2f6fa3;
+      --amber: #c97d15;
+      --red: #b94a48;
+      --green: #2f7d51;
+      --violet: #7653a3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    header {
+      background: #0f1f2e;
+      color: #fff;
+      padding: 28px 24px 24px;
+      border-bottom: 4px solid var(--teal);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #9ed6cf;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      width: min(820px, 100%);
+      margin: 14px 0 0;
+      color: #d7e1ea;
+      font-size: 17px;
+    }
+
+    .topline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 0;
+    }
+
+    .metric-card {
+      min-height: 166px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(20, 36, 52, 0.05);
+    }
+
+    .metric-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .badge {
+      height: 23px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .badge.Moderate {
+      background: var(--amber);
+    }
+
+    .badge.Elevated {
+      background: var(--red);
+    }
+
+    .metric-value {
+      margin: 0 0 10px;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .metric-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 247, 250, 0.95);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+
+    .tab {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 14px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      border-color: #0f1f2e;
+      background: #0f1f2e;
+      color: #fff;
+    }
+
+    main {
+      padding: 20px 0 34px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .filter-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    select {
+      min-width: 160px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px 10px;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 600;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(20, 36, 52, 0.05);
+    }
+
+    .panel h3 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    .panel-note {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 320px;
+    }
+
+    .chart.short {
+      height: 250px;
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .insight-list li {
+      border-left: 4px solid var(--teal);
+      padding: 2px 0 2px 12px;
+      color: var(--muted);
+    }
+
+    .insight-list strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .action-rank {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #0f1f2e;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 20;
+      display: none;
+      max-width: 280px;
+      background: #0f1f2e;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+      font-size: 13px;
+    }
+
+    .tooltip strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .axis,
+    .gridline {
+      stroke: #d8e0e8;
+      stroke-width: 1;
+    }
+
+    .axis-text {
+      fill: var(--muted);
+      font-size: 11px;
+    }
+
+    .label-text {
+      fill: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .empty-state {
+      padding: 18px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    @media (max-width: 920px) {
+      .topline,
+      .grid-2,
+      .grid-3,
+      .section-head {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-row {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      header {
+        padding: 22px 16px;
+      }
+
+      .wrap {
+        width: min(100vw - 24px, 1180px);
+      }
+
+      .metric-card,
+      .panel {
+        padding: 14px;
+      }
+
+      .chart {
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">Client Dashboard Prototype</p>
+      <h1>Marketplace Revenue Risk Dashboard</h1>
+      <p class="lede">
+        A business-facing view of revenue stability, geographic dependency, customer concentration,
+        and liquidity timing risk across 100,000+ Brazilian marketplace transactions.
+      </p>
+      <div class="topline" id="kpiCards"></div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="wrap">
+      <div class="tabs" role="tablist" aria-label="Dashboard sections">
+        <button class="tab" type="button" data-view="overview" aria-selected="true">Overview</button>
+        <button class="tab" type="button" data-view="stability" aria-selected="false">Revenue Stability</button>
+        <button class="tab" type="button" data-view="concentration" aria-selected="false">Concentration Risk</button>
+        <button class="tab" type="button" data-view="liquidity" aria-selected="false">Liquidity & Actions</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section id="overview" class="view active">
+      <div class="section-head">
+        <div>
+          <h2>Executive Risk Overview</h2>
+          <p>Revenue is scaling, but management should watch four risks that affect planning confidence.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Risk Priority Map</h3>
+          <p class="panel-note">Each KPI is translated into a client-readable risk level and action.</p>
+          <div class="chart short" id="riskPriorityChart"></div>
+        </div>
+        <div class="panel">
+          <h3>What The Client Should Do Next</h3>
+          <p class="panel-note">Actions are ordered by practical business impact.</p>
+          <ul class="insight-list" id="overviewActions"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="stability" class="view">
+      <div class="section-head">
+        <div>
+          <h2>Revenue Stability</h2>
+          <p>Monthly revenue grew overall, but short-term swings make forecasting less predictable.</p>
+        </div>
+        <div class="filter-row">
+          <label for="monthFocus">Focus</label>
+          <select id="monthFocus">
+            <option value="all">All months</option>
+            <option value="High swing">High swing months</option>
+            <option value="Growth">Growth months</option>
+            <option value="Decline">Decline months</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Monthly Revenue Trend</h3>
+          <p class="panel-note">The late-2017 spike lifted revenue, but volatility remained visible afterward.</p>
+          <div class="chart" id="monthlyRevenueChart"></div>
+        </div>
+        <div class="panel">
+          <h3>Month-over-Month Growth</h3>
+          <p class="panel-note">Positive and negative swings show where revenue planning risk appears.</p>
+          <div class="chart" id="momGrowthChart"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="concentration" class="view">
+      <div class="section-head">
+        <div>
+          <h2>Concentration Risk</h2>
+          <p>Revenue depends heavily on a small set of states and high-value customers.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Revenue Share By State</h3>
+          <p class="panel-note">SP is the largest regional exposure and should be monitored separately.</p>
+          <div class="chart" id="stateRevenueChart"></div>
+        </div>
+        <div class="panel">
+          <h3>Customer Revenue Deciles</h3>
+          <p class="panel-note">The top decile creates a meaningful retention dependency.</p>
+          <div class="chart" id="customerDecileChart"></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top: 16px;">
+        <h3>Lorenz Curve: Customer Revenue Inequality</h3>
+        <p class="panel-note">The farther the line falls below equality, the more revenue depends on a small customer group.</p>
+        <div class="chart short" id="lorenzChart"></div>
+      </div>
+    </section>
+
+    <section id="liquidity" class="view">
+      <div class="section-head">
+        <div>
+          <h2>Liquidity & Action Plan</h2>
+          <p>Installment-heavy payment behavior delays cash collection and should shape working-capital planning.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Revenue By Payment Structure</h3>
+          <p class="panel-note">Installment orders generate most revenue, which creates timing exposure.</p>
+          <div class="chart short" id="paymentStructureChart"></div>
+        </div>
+        <div class="panel">
+          <h3>Installment Count Distribution</h3>
+          <p class="panel-note">Higher installment counts spread cash collection across a longer period.</p>
+          <div class="chart short" id="installmentChart"></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top: 16px;">
+        <h3>Recommended Management Actions</h3>
+        <p class="panel-note">Each action links a dashboard insight to a measurable business outcome.</p>
+        <div id="actionTable"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    const fallback = {
+      kpi_summary: [
+        { sort_order: 1, risk_dimension: "Revenue Stability", display_value: "0.42 CV", risk_level: "Moderate", client_explanation: "Monthly revenue is growing overall, but cash flow is still difficult to forecast month to month.", recommended_action: "Plan promotions around historically weak months and monitor large month-to-month swings." },
+        { sort_order: 2, risk_dimension: "Geographic Concentration", display_value: "0.18 HHI", risk_level: "Moderate", client_explanation: "Revenue is meaningfully exposed to a few states; SP contributes 37% of revenue.", recommended_action: "Expand seller and buyer acquisition in MG and PR to reduce dependency on SP." },
+        { sort_order: 3, risk_dimension: "Customer Concentration", display_value: "0.479 Gini", risk_level: "Elevated", client_explanation: "The highest-spending customer decile contributes 38% of revenue.", recommended_action: "Protect high-value customers with loyalty benefits while broadening mid-tier repeat purchases." },
+        { sort_order: 4, risk_dimension: "Liquidity Risk", display_value: "4.12 installments", risk_level: "Elevated", client_explanation: "Installment-heavy orders contribute 64% of revenue, delaying cash collection.", recommended_action: "Introduce small incentives for one-time payment or lower-installment checkout choices." }
+      ],
+      monthly_revenue: [
+        { month: "2017-01-01", monthly_revenue: 13333.31, mom_growth: null, growth_direction: "Baseline", volatility_signal: "Baseline month" },
+        { month: "2017-02-01", monthly_revenue: 29198.88, mom_growth: 1.1899, growth_direction: "Growth", volatility_signal: "High swing" },
+        { month: "2017-03-01", monthly_revenue: 44995.41, mom_growth: 0.541, growth_direction: "Growth", volatility_signal: "High swing" },
+        { month: "2017-04-01", monthly_revenue: 41792.36, mom_growth: -0.0712, growth_direction: "Decline", volatility_signal: "Normal movement" },
+        { month: "2017-05-01", monthly_revenue: 59244.78, mom_growth: 0.4176, growth_direction: "Growth", volatility_signal: "High swing" },
+        { month: "2017-06-01", monthly_revenue: 51170.62, mom_growth: -0.1363, growth_direction: "Decline", volatility_signal: "Normal movement" },
+        { month: "2017-07-01", monthly_revenue: 59283.9, mom_growth: 0.1586, growth_direction: "Growth", volatility_signal: "Normal movement" },
+        { month: "2017-08-01", monthly_revenue: 67490.67, mom_growth: 0.1384, growth_direction: "Growth", volatility_signal: "Normal movement" },
+        { month: "2017-09-01", monthly_revenue: 72783.18, mom_growth: 0.0784, growth_direction: "Growth", volatility_signal: "Normal movement" },
+        { month: "2017-10-01", monthly_revenue: 77950.56, mom_growth: 0.071, growth_direction: "Growth", volatility_signal: "Normal movement" },
+        { month: "2017-11-01", monthly_revenue: 119488.94, mom_growth: 0.5329, growth_direction: "Growth", volatility_signal: "High swing" },
+        { month: "2017-12-01", monthly_revenue: 878401.48, mom_growth: 6.3513, growth_direction: "Growth", volatility_signal: "High swing" },
+        { month: "2018-01-01", monthly_revenue: 1115004.18, mom_growth: 0.2694, growth_direction: "Growth", volatility_signal: "High swing" },
+        { month: "2018-02-01", monthly_revenue: 992463.34, mom_growth: -0.1099, growth_direction: "Decline", volatility_signal: "Normal movement" },
+        { month: "2018-03-01", monthly_revenue: 1159652.12, mom_growth: 0.1685, growth_direction: "Growth", volatility_signal: "Normal movement" },
+        { month: "2018-04-01", monthly_revenue: 1160785.48, mom_growth: 0.001, growth_direction: "Growth", volatility_signal: "Normal movement" },
+        { month: "2018-05-01", monthly_revenue: 1153982.15, mom_growth: -0.0059, growth_direction: "Decline", volatility_signal: "Normal movement" },
+        { month: "2018-06-01", monthly_revenue: 1023880.5, mom_growth: -0.1127, growth_direction: "Decline", volatility_signal: "Normal movement" },
+        { month: "2018-07-01", monthly_revenue: 1066540.75, mom_growth: 0.0417, growth_direction: "Growth", volatility_signal: "Normal movement" },
+        { month: "2018-08-01", monthly_revenue: 1022425.32, mom_growth: -0.0414, growth_direction: "Decline", volatility_signal: "Normal movement" }
+      ],
+      state_revenue: [
+        { customer_state: "SP", total_revenue: 5770266.19, state_rank: 1, revenue_share: 0.3741 },
+        { customer_state: "RJ", total_revenue: 2055690.45, state_rank: 2, revenue_share: 0.1333 },
+        { customer_state: "MG", total_revenue: 1819277.61, state_rank: 3, revenue_share: 0.118 },
+        { customer_state: "RS", total_revenue: 861802.4, state_rank: 4, revenue_share: 0.0559 },
+        { customer_state: "PR", total_revenue: 781919.55, state_rank: 5, revenue_share: 0.0507 },
+        { customer_state: "SC", total_revenue: 595208.4, state_rank: 6, revenue_share: 0.0386 },
+        { customer_state: "BA", total_revenue: 591270.6, state_rank: 7, revenue_share: 0.0383 }
+      ],
+      customer_decile_summary: [
+        { decile: 1, revenue_share: 0.3825, segment_label: "Decile 1 - Highest spenders" },
+        { decile: 2, revenue_share: 0.1527, segment_label: "Decile 2" },
+        { decile: 3, revenue_share: 0.111, segment_label: "Decile 3" },
+        { decile: 4, revenue_share: 0.0889, segment_label: "Decile 4" },
+        { decile: 5, revenue_share: 0.0724, segment_label: "Decile 5" },
+        { decile: 6, revenue_share: 0.059, segment_label: "Decile 6" },
+        { decile: 7, revenue_share: 0.0474, segment_label: "Decile 7" },
+        { decile: 8, revenue_share: 0.038, segment_label: "Decile 8" },
+        { decile: 9, revenue_share: 0.0289, segment_label: "Decile 9" },
+        { decile: 10, revenue_share: 0.0192, segment_label: "Decile 10" }
+      ],
+      customer_lorenz_curve: [
+        { cumulative_customer_share: 0, cumulative_revenue_share: 0 },
+        { cumulative_customer_share: 0.2, cumulative_revenue_share: 0.0648 },
+        { cumulative_customer_share: 0.4, cumulative_revenue_share: 0.1924 },
+        { cumulative_customer_share: 0.6, cumulative_revenue_share: 0.3548 },
+        { cumulative_customer_share: 0.8, cumulative_revenue_share: 0.6175 },
+        { cumulative_customer_share: 1, cumulative_revenue_share: 1 }
+      ],
+      payment_summary: [
+        { payment_structure: "Installment", total_revenue: 9794985.08, order_count: 49663, order_share: 0.5148, revenue_share: 0.6351 },
+        { payment_structure: "One-time", total_revenue: 5627476.69, order_count: 46814, order_share: 0.4852, revenue_share: 0.3649 }
+      ],
+      installment_distribution: [
+        { max_installments: 1, revenue_share: 0.3649 }, { max_installments: 2, revenue_share: 0.111 },
+        { max_installments: 3, revenue_share: 0.099 }, { max_installments: 4, revenue_share: 0.076 },
+        { max_installments: 5, revenue_share: 0.082 }, { max_installments: 6, revenue_share: 0.073 },
+        { max_installments: 7, revenue_share: 0.017 }, { max_installments: 8, revenue_share: 0.111 },
+        { max_installments: 10, revenue_share: 0.057 }
+      ],
+      action_plan: [
+        { priority: 1, action_area: "Revenue calendar", suggested_intervention: "Run mid-year and January retention campaigns to smooth demand shocks.", success_metric: "Reduce revenue CV toward 0.30" },
+        { priority: 2, action_area: "Regional expansion", suggested_intervention: "Prioritize MG and PR seller recruitment and state-level campaigns.", success_metric: "Reduce SP revenue share below 30%" },
+        { priority: 3, action_area: "Customer retention", suggested_intervention: "Launch tiered benefits for the top two customer deciles.", success_metric: "Increase repeat purchase rate in top 20% customers" },
+        { priority: 4, action_area: "Cash collection", suggested_intervention: "Offer 3%-6% one-time payment incentives or free shipping for lower installment counts.", success_metric: "Reduce installment revenue share by 10 percentage points" }
+      ]
+    };
+
+    const files = {
+      kpi_summary: "tableau_data/kpi_summary.csv",
+      monthly_revenue: "tableau_data/monthly_revenue.csv",
+      state_revenue: "tableau_data/state_revenue.csv",
+      customer_decile_summary: "tableau_data/customer_decile_summary.csv",
+      customer_lorenz_curve: "tableau_data/customer_lorenz_curve.csv",
+      payment_summary: "tableau_data/payment_summary.csv",
+      installment_distribution: "tableau_data/installment_distribution.csv",
+      action_plan: "tableau_data/action_plan.csv"
+    };
+
+    const fmtCurrency = new Intl.NumberFormat("en-US", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+    const fmtPct = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 });
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (char === '"' && inQuotes && next === '"') {
+          cell += '"';
+          i += 1;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === "\n" || char === "\r") && !inQuotes) {
+          if (char === "\r" && next === "\n") i += 1;
+          row.push(cell);
+          if (row.some(value => value.length)) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
+        }
+      }
+      if (cell.length || row.length) {
+        row.push(cell);
+        rows.push(row);
+      }
+      const headers = rows.shift() || [];
+      return rows.map(values => Object.fromEntries(headers.map((header, index) => {
+        const raw = values[index] ?? "";
+        const number = Number(raw);
+        return [header, raw !== "" && Number.isFinite(number) ? number : raw];
+      })));
+    }
+
+    async function loadData() {
+      const entries = await Promise.all(Object.entries(files).map(async ([key, url]) => {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(response.statusText);
+          return [key, parseCsv(await response.text())];
+        } catch (error) {
+          return [key, fallback[key]];
+        }
+      }));
+      return Object.fromEntries(entries);
+    }
+
+    function showTooltip(event, title, lines) {
+      const tooltip = document.getElementById("tooltip");
+      tooltip.innerHTML = `<strong>${title}</strong>${lines.join("<br>")}`;
+      tooltip.style.display = "block";
+      tooltip.style.left = `${Math.min(event.clientX + 14, window.innerWidth - 310)}px`;
+      tooltip.style.top = `${event.clientY + 14}px`;
+    }
+
+    function hideTooltip() {
+      document.getElementById("tooltip").style.display = "none";
+    }
+
+    function svgEl(name, attrs = {}) {
+      const element = document.createElementNS("http://www.w3.org/2000/svg", name);
+      Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
+      return element;
+    }
+
+    function clearChart(id) {
+      const node = document.getElementById(id);
+      node.innerHTML = "";
+      const width = node.clientWidth || 600;
+      const height = node.clientHeight || 300;
+      const svg = svgEl("svg", { viewBox: `0 0 ${width} ${height}`, width: "100%", height: "100%", role: "img" });
+      node.appendChild(svg);
+      return { svg, width, height };
+    }
+
+    function addText(svg, text, x, y, className = "axis-text", anchor = "start") {
+      const t = svgEl("text", { x, y, class: className, "text-anchor": anchor });
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    function lineChart(id, data, xKey, yKey, color, options = {}) {
+      const { svg, width, height } = clearChart(id);
+      const margin = { top: 18, right: 18, bottom: 42, left: 58 };
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+      const values = data.map(d => Number(d[yKey])).filter(Number.isFinite);
+      const minY = options.minY ?? Math.min(...values, 0);
+      const maxY = options.maxY ?? Math.max(...values);
+      const x = index => margin.left + (plotW * index) / Math.max(data.length - 1, 1);
+      const y = value => margin.top + plotH - ((value - minY) / (maxY - minY || 1)) * plotH;
+
+      [0, 0.25, 0.5, 0.75, 1].forEach(step => {
+        const yy = margin.top + plotH * step;
+        svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: yy, y2: yy, class: "gridline" }));
+      });
+
+      const path = data.map((d, index) => `${index === 0 ? "M" : "L"} ${x(index)} ${y(Number(d[yKey]))}`).join(" ");
+      svg.appendChild(svgEl("path", { d: path, fill: "none", stroke: color, "stroke-width": 3, "stroke-linejoin": "round" }));
+
+      data.forEach((d, index) => {
+        const point = svgEl("circle", { cx: x(index), cy: y(Number(d[yKey])), r: 4, fill: color });
+        point.addEventListener("mousemove", event => showTooltip(event, formatMonth(d[xKey]), [
+          `${options.valueLabel || "Value"}: ${options.format ? options.format(d[yKey]) : d[yKey]}`,
+          d.volatility_signal ? `Signal: ${d.volatility_signal}` : ""
+        ].filter(Boolean)));
+        point.addEventListener("mouseleave", hideTooltip);
+        svg.appendChild(point);
+      });
+
+      addText(svg, options.format ? options.format(maxY) : String(maxY), 8, margin.top + 4);
+      addText(svg, options.format ? options.format(minY) : String(minY), 8, margin.top + plotH);
+      addText(svg, formatMonth(data[0][xKey]), margin.left, height - 12);
+      addText(svg, formatMonth(data[data.length - 1][xKey]), width - margin.right, height - 12, "axis-text", "end");
+    }
+
+    function barChart(id, data, labelKey, valueKey, colorFn, options = {}) {
+      const { svg, width, height } = clearChart(id);
+      const margin = { top: 14, right: 18, bottom: 44, left: options.left || 52 };
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+      const values = data.map(d => Number(d[valueKey])).filter(Number.isFinite);
+      const min = Math.min(0, ...values);
+      const max = Math.max(...values, 0);
+      const zeroY = margin.top + plotH - ((0 - min) / (max - min || 1)) * plotH;
+      const barW = plotW / data.length * 0.7;
+
+      svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: zeroY, y2: zeroY, class: "axis" }));
+
+      data.forEach((d, index) => {
+        const value = Number(d[valueKey]);
+        const x = margin.left + (index + 0.15) * (plotW / data.length);
+        const y = value >= 0
+          ? margin.top + plotH - ((value - min) / (max - min || 1)) * plotH
+          : zeroY;
+        const h = Math.max(1, Math.abs(y - zeroY));
+        const rect = svgEl("rect", {
+          x, y, width: barW, height: h,
+          fill: colorFn(d, index),
+          rx: 3
+        });
+        rect.addEventListener("mousemove", event => showTooltip(event, d[labelKey], [
+          `${options.valueLabel || "Share"}: ${options.format ? options.format(value) : value}`
+        ]));
+        rect.addEventListener("mouseleave", hideTooltip);
+        svg.appendChild(rect);
+
+        if (data.length <= 12) {
+          addText(svg, d[labelKey], x + barW / 2, height - 14, "axis-text", "middle");
+        } else if (index === 0 || index === data.length - 1) {
+          addText(svg, d[labelKey], x, height - 14, "axis-text", index === 0 ? "start" : "end");
+        }
+      });
+    }
+
+    function horizontalBarChart(id, data, labelKey, valueKey, colorFn, options = {}) {
+      const { svg, width, height } = clearChart(id);
+      const margin = { top: 12, right: 42, bottom: 18, left: options.left || 54 };
+      const plotW = width - margin.left - margin.right;
+      const rowH = (height - margin.top - margin.bottom) / data.length;
+      const max = Math.max(...data.map(d => Number(d[valueKey])));
+
+      data.forEach((d, index) => {
+        const y = margin.top + index * rowH + rowH * 0.18;
+        const w = plotW * Number(d[valueKey]) / max;
+        addText(svg, d[labelKey], 8, y + rowH * 0.45, "label-text");
+        const rect = svgEl("rect", { x: margin.left, y, width: w, height: rowH * 0.58, fill: colorFn(d, index), rx: 3 });
+        rect.addEventListener("mousemove", event => showTooltip(event, d[labelKey], [
+          `Revenue share: ${fmtPct.format(d[valueKey])}`,
+          d.total_revenue ? `Revenue: ${fmtCurrency.format(d.total_revenue)}` : ""
+        ].filter(Boolean)));
+        rect.addEventListener("mouseleave", hideTooltip);
+        svg.appendChild(rect);
+        addText(svg, options.format ? options.format(d[valueKey]) : d[valueKey], margin.left + w + 6, y + rowH * 0.45, "axis-text");
+      });
+    }
+
+    function scatterLineChart(id, data, color) {
+      const { svg, width, height } = clearChart(id);
+      const margin = { top: 16, right: 18, bottom: 38, left: 52 };
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+      const x = value => margin.left + plotW * Number(value);
+      const y = value => margin.top + plotH - plotH * Number(value);
+
+      svg.appendChild(svgEl("line", { x1: x(0), y1: y(0), x2: x(1), y2: y(1), stroke: "#9aa8b5", "stroke-width": 1.5, "stroke-dasharray": "5 5" }));
+      const path = data.map((d, index) => `${index === 0 ? "M" : "L"} ${x(d.cumulative_customer_share)} ${y(d.cumulative_revenue_share)}`).join(" ");
+      svg.appendChild(svgEl("path", { d: path, fill: "none", stroke: color, "stroke-width": 3 }));
+      addText(svg, "0% customers", margin.left, height - 12);
+      addText(svg, "100% customers", width - margin.right, height - 12, "axis-text", "end");
+      addText(svg, "100% revenue", 8, margin.top + 5);
+      addText(svg, "Equality line", x(0.62), y(0.62) - 8, "axis-text");
+    }
+
+    function formatMonth(value) {
+      const date = new Date(`${value}T00:00:00Z`);
+      return date.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+    }
+
+    function renderKpis(kpis) {
+      const container = document.getElementById("kpiCards");
+      container.innerHTML = kpis.sort((a, b) => a.sort_order - b.sort_order).map(kpi => `
+        <article class="metric-card">
+          <div class="metric-title">
+            <span>${kpi.risk_dimension}</span>
+            <span class="badge ${kpi.risk_level}">${kpi.risk_level}</span>
+          </div>
+          <p class="metric-value">${kpi.display_value}</p>
+          <p class="metric-copy">${kpi.client_explanation}</p>
+        </article>
+      `).join("");
+    }
+
+    function renderOverview(data) {
+      horizontalBarChart("riskPriorityChart", data.kpi_summary, "risk_dimension", "sort_order",
+        d => d.risk_level === "Elevated" ? "var(--red)" : "var(--amber)",
+        { left: 165, format: value => `Priority ${value}` });
+
+      document.getElementById("overviewActions").innerHTML = data.kpi_summary
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map(item => `<li><strong>${item.risk_dimension}</strong>${item.recommended_action}</li>`)
+        .join("");
+    }
+
+    function renderStability(data) {
+      const focus = document.getElementById("monthFocus").value;
+      const months = data.monthly_revenue.filter(d => {
+        if (focus === "all") return true;
+        if (focus === "High swing") return d.volatility_signal === "High swing";
+        return d.growth_direction === focus;
+      });
+      const chartMonths = months.length ? months : data.monthly_revenue;
+      lineChart("monthlyRevenueChart", chartMonths, "month", "monthly_revenue", "var(--blue)", {
+        valueLabel: "Revenue",
+        format: fmtCurrency.format
+      });
+      barChart("momGrowthChart", chartMonths.filter(d => Number.isFinite(Number(d.mom_growth))), "month", "mom_growth",
+        d => Number(d.mom_growth) >= 0 ? "var(--green)" : "var(--red)",
+        { format: fmtPct.format, valueLabel: "MoM growth" });
+    }
+
+    function renderConcentration(data) {
+      horizontalBarChart("stateRevenueChart", data.state_revenue.slice(0, 10), "customer_state", "revenue_share",
+        (d, index) => index < 3 ? "var(--teal)" : "var(--blue)",
+        { format: fmtPct.format });
+      barChart("customerDecileChart", data.customer_decile_summary, "decile", "revenue_share",
+        d => Number(d.decile) === 1 ? "var(--red)" : "var(--violet)",
+        { format: fmtPct.format, valueLabel: "Revenue share" });
+      scatterLineChart("lorenzChart", data.customer_lorenz_curve, "var(--amber)");
+    }
+
+    function renderLiquidity(data) {
+      barChart("paymentStructureChart", data.payment_summary, "payment_structure", "revenue_share",
+        d => d.payment_structure === "Installment" ? "var(--red)" : "var(--green)",
+        { format: fmtPct.format, valueLabel: "Revenue share" });
+      const topInstallments = data.installment_distribution
+        .filter(d => Number(d.revenue_share) > 0.005)
+        .sort((a, b) => Number(a.max_installments) - Number(b.max_installments));
+      barChart("installmentChart", topInstallments, "max_installments", "revenue_share",
+        d => Number(d.max_installments) === 1 ? "var(--green)" : "var(--blue)",
+        { format: fmtPct.format, valueLabel: "Revenue share" });
+      document.getElementById("actionTable").innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Priority</th><th>Area</th><th>Intervention</th><th>Success Metric</th></tr>
+          </thead>
+          <tbody>
+            ${data.action_plan.sort((a, b) => a.priority - b.priority).map(row => `
+              <tr>
+                <td><span class="action-rank">${row.priority}</span></td>
+                <td><strong>${row.action_area}</strong></td>
+                <td>${row.suggested_intervention}</td>
+                <td>${row.success_metric}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function wireTabs(data) {
+      const renderers = {
+        overview: () => renderOverview(data),
+        stability: () => renderStability(data),
+        concentration: () => renderConcentration(data),
+        liquidity: () => renderLiquidity(data)
+      };
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".tab").forEach(item => item.setAttribute("aria-selected", "false"));
+          document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+          tab.setAttribute("aria-selected", "true");
+          document.getElementById(tab.dataset.view).classList.add("active");
+          renderers[tab.dataset.view]();
+        });
+      });
+      document.getElementById("monthFocus").addEventListener("change", () => renderStability(data));
+      window.addEventListener("resize", () => {
+        const active = document.querySelector(".view.active").id;
+        renderers[active]();
+      });
+    }
+
+    loadData().then(data => {
+      renderKpis(data.kpi_summary);
+      renderOverview(data);
+      wireTabs(data);
+    }).catch(error => {
+      document.querySelector("main").innerHTML = `<div class="empty-state">Dashboard data could not be loaded: ${error.message}</div>`;
+    });
+  </script>
+</body>
+</html>
