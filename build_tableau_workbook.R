@@ -377,7 +377,7 @@ make_dashboard <- function(name, zones) {
 make_client_overview_dashboard <- function() {
   image_path <- file.path("Image", client_overview_image)
   paste(
-    "    <dashboard enable-sort-zone-taborder='true' name='Client Overview'>",
+    "    <dashboard name='Client Overview'>",
     "      <style />",
     "      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />",
     "      <zones>",
