@@ -157,7 +157,7 @@ library(ineq)
 gini <- ineq(customer$total_revenue, type = "Gini")
 gini
 
-# Liquidity Risk
+# Cash Flow Timing
 payment <- dbReadTable(con, "order_payment_structure")
 head(payment)
 

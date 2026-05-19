@@ -232,12 +232,12 @@ kpi_summary <- data.frame(
     "Revenue Stability",
     "Geographic Concentration",
     "Customer Concentration",
-    "Liquidity Risk"
+    "Cash Flow Timing"
   ),
   kpi_name = c(
     "Coefficient of Variation",
-    "Herfindahl-Hirschman Index",
-    "Gini Coefficient",
+    "Herfindahl-Hirschman Index (geographic adaptation)",
+    "Gini Coefficient (customer revenue inequality)",
     "Revenue-weighted Avg. Installments"
   ),
   kpi_value = round(c(cv_rev, hhi, gini_customer, weighted_installment), 4),
@@ -249,50 +249,50 @@ kpi_summary <- data.frame(
   ),
   risk_level = c("Moderate", "Moderate", "Elevated", "Elevated"),
   client_explanation = c(
-    "Monthly revenue is growing overall, but cash flow is still difficult to forecast month to month.",
-    paste0("Revenue is meaningfully exposed to a few states; SP contributes ", round(sp_share * 100), "% of revenue."),
-    paste0("The highest-spending customer decile contributes ", round(top_decile_share * 100), "% of revenue."),
-    paste0("Installment-heavy orders contribute ", round(installment_share * 100), "% of revenue, delaying cash collection.")
+    "Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence.",
+    paste0("Revenue is concentrated in a few states; SP contributes ", round(sp_share * 100), "% of revenue, while MG and PR trail below their share of national GDP."),
+    paste0("The highest-spending customer decile contributes ", round(top_decile_share * 100), "% of revenue; the top three deciles together account for roughly 64%."),
+    paste0("Installment-heavy orders contribute ", round(installment_share * 100), "% of revenue, lengthening the gap between revenue recognition and cash collection.")
   ),
-  recommended_action = c(
-    "Plan promotions around historically weak months and monitor large month-to-month swings.",
-    "Expand seller and buyer acquisition in MG and PR to reduce dependency on SP.",
-    "Protect high-value customers with loyalty benefits while broadening mid-tier repeat purchases.",
-    "Introduce small incentives for one-time payment or lower-installment checkout choices."
+  pattern_to_monitor = c(
+    "Negative MoM swings cluster in mid-year and post-holiday months, consistent with Brazilian seasonal demand patterns.",
+    "MG and PR are the two largest under-represented states relative to their economic size, making them the most observable diversification levers.",
+    "The Lorenz curve's deviation from equality is driven mainly by the top two deciles, which together contribute roughly 52% of revenue.",
+    "Average installment count (4.12) is modest within Brazilian '12x sem juros' culture; the dominant driver of cash-timing exposure is the share of revenue routed through installments (~64%), not the per-order installment depth."
   )
 )
 
 action_plan <- data.frame(
   priority = 1:4,
-  action_area = c(
+  focus_area = c(
     "Revenue calendar",
-    "Regional expansion",
-    "Customer retention",
+    "Regional concentration",
+    "Customer concentration",
     "Cash collection"
   ),
   business_question = c(
     "Which months create the largest revenue planning risk?",
-    "Which states should receive expansion investment?",
+    "Which states are most under-represented relative to economic size?",
     "How dependent is revenue on the highest-value buyers?",
-    "How much revenue is delayed by installment behavior?"
+    "How is revenue split between upfront and installment cash inflows?"
   ),
   dashboard_view = c(
     "Revenue Stability",
     "Geographic Concentration",
     "Customer Concentration",
-    "Liquidity Risk"
+    "Cash Flow Timing"
   ),
-  suggested_intervention = c(
-    "Run mid-year and January retention campaigns to smooth demand shocks.",
-    "Prioritize MG and PR seller recruitment and state-level campaigns.",
-    "Launch tiered benefits for the top two customer deciles.",
-    "Offer 3%-6% one-time payment incentives or free shipping for lower installment counts."
+  key_pattern = c(
+    "Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.",
+    "MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.",
+    "Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.",
+    "Installment-share of revenue (~64%) is the dominant cash-timing signal; per-order installment depth (4.12) is modest by Brazilian baseline."
   ),
-  success_metric = c(
-    "Reduce revenue CV toward 0.30",
-    "Reduce SP revenue share below 30%",
-    "Increase repeat purchase rate in top 20% customers",
-    "Reduce installment revenue share by 10 percentage points"
+  tracking_metric = c(
+    "Monthly revenue CV (baseline 0.42)",
+    "SP revenue share (baseline 37%)",
+    "Top decile revenue share (baseline 38%)",
+    "Installment revenue share (baseline 64%)"
   )
 )
 

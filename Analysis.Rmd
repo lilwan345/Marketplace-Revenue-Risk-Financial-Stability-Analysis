@@ -135,7 +135,7 @@ hhi <- sum(state$revenue_share^2)
 hhi
 ```
 
-The Herfindahl-Hirschman Index (HHI = `r round(hhi, 3)`) reflects a moderate level of geographic concentration. While the market is not monopolistically concentrated, the heavy dependence on SP introduces regional risk — any economic disruption, logistics issue, or regulatory change in São Paulo could materially impact overall revenue.
+The Herfindahl-Hirschman Index (HHI = `r round(hhi, 3)`) reflects a moderate level of geographic concentration. HHI is adapted here from its antitrust convention (firm market shares) to state-level revenue shares; the U.S. DOJ moderately-concentrated band of 0.15–0.25 is used as a reference range. While the market is not monopolistically concentrated, the heavy dependence on SP introduces regional exposure — any economic disruption, logistics issue, or regulatory change in São Paulo could materially impact overall revenue.
 
 ---
 
@@ -202,9 +202,9 @@ The Gini coefficient of `r round(gini, 3)` indicates a moderate-to-high level of
 
 ---
 
-## Liquidity Risk
+## Cash Flow Timing
 
-This section evaluates whether the payment structure could create cash flow timing risk for the business.
+This section evaluates whether the payment structure creates a measurable gap between revenue recognition and cash collection. Note that "liquidity risk" in the strict finance sense means inability to convert assets to cash; what this section measures is cash-collection timing driven by installment behavior, which sits closer to working-capital cycle analysis than to liquidity risk per se.
 
 ```{r}
 payment_summary <- payment %>%
@@ -240,30 +240,32 @@ weighted_installment <- sum(payment$max_installments * payment$order_total) /
 weighted_installment
 ```
 
-The revenue-weighted average installment count is approximately `r round(weighted_installment, 2)`, meaning that on average, each order's payment is spread across more than four installments. This installment-heavy structure implies that a meaningful portion of recognized revenue will only be collected weeks to months after the transaction — a liquidity timing risk that should be reflected in working capital planning.
+The revenue-weighted average installment count is approximately `r round(weighted_installment, 2)`. Brazilian e-commerce operates within the "12x sem juros" (12-installment interest-free) cultural baseline, so 4.12 is modest by local benchmarks; the dominant cash-timing signal in this dataset is the share of revenue routed through installments (~64%), not the per-order installment depth. The structural implication is that a meaningful portion of recognized revenue is collected weeks to months after the transaction, lengthening the working-capital cycle.
 
 ---
 
 ## Final Summary
 
-This analysis quantified four dimensions of financial risk for a Brazilian e-commerce marketplace using 100,000+ transactions from 2016–2018:
+This analysis quantified four dimensions of financial risk on the Olist Brazilian e-commerce dataset (99,442 orders, 2016–2018):
 
 - **Revenue Stability**: Moderate volatility (CV = 0.42) with uneven short-term growth
-- **Geographic Concentration**: SP drives 37% of revenue (HHI = 0.18), creating regional dependency
+- **Geographic Concentration**: SP drives 37% of revenue (HHI = 0.18 — adapted from antitrust convention to state-level shares), creating regional exposure
 - **Customer Concentration**: Top 10% of customers account for 38% of revenue (Gini = 0.475)
-- **Liquidity Risk**: Installment-heavy payment structure (avg. 4.12 installments) delays cash collection
+- **Cash Flow Timing**: Installment-heavy payment structure (~64% of revenue, avg. 4.12 installments) lengthens the working-capital cycle
 - **Forecast**: Short-term revenue is expected to remain at elevated levels, with meaningful uncertainty reflecting historical volatility
 
-Together, these findings suggest the business is in a growth phase but faces concentration risks that should be actively managed as it scales.
+Together, these findings describe a business in a growth phase with concentration and cash-timing patterns that warrant active monitoring as it scales.
 
 ---
 
-## Some Suggestions
+## Patterns Worth Further Investigation
 
-- **CV = 0.42**: The period with the largest decline in revenue occurred during the middle of 2017 (from June to July) and from the end of 2017 to January 2018. The decline that occurred in the middle of the year might reflect a slowdown in demand after the Carnival, as Brazilian consumers' spending typically weakens after the holiday season from February to March. The decline from the end of 2017 to January 2018 coincided with the post-Black Friday and post-Christmas holiday fatigue. To stabilize revenue, I believe Olist should launch targeted promotional activities during June to July (for example, an mid-year clearance event related to the Brazilian winter season), and launch complementary discounts in January to maintain the sales momentum after the holiday period, reducing the customer churn rate from 0.42 to a more stable level of around 0.30.
+This section reframes the analytical findings into observable patterns and the business questions they raise. Recommendations on what to *do* about each pattern sit with PMs and business owners; the role of this analysis is to surface the patterns and quantify them.
 
-- **Geographic Concentration (HHI = 0.18, SP = 37%)**: The 37% revenue share of the São Paulo Company has resulted in a significant reliance on a single region. Any local disturbances (such as logistics delays, economic downturns, or regional competition) could have a disproportionate impact on the overall revenue. MG and PR are the most feasible expansion targets. The revenue share of MG has already ranked third (approximately 12%), but it is still significantly lower than that of the São Paulo State, indicating that there are untapped demands in such an economically active state. The revenue share of PR is approximately 5%, although it is one of the wealthiest and most well-organized southern states in Brazil. Prioritizing the recruitment of sellers and conducting regional promotional activities in these two states may reduce the company's share from 37% to below 30%, thereby lowering the Herfindahl-Hirschman Index(HHI) and reducing the revenue risk in a single region.
+- **Revenue volatility (CV = 0.42)**: The largest negative MoM swings occur in mid-2017 (June–July) and around the December 2017 → January 2018 transition. Mid-year aligns with the post-Carnival demand softening characteristic of Brazilian retail seasonality; the late-year drop aligns with post-Black-Friday / post-holiday fatigue. The pattern suggests revenue volatility has a partially predictable seasonal component, which is observable in the monthly_revenue volatility_signal field. The question worth carrying into a planning conversation: how much of the CV is structurally seasonal versus driven by month-specific shocks?
 
-- **Customer Concentration (Gini = 0.475)**: The Lorenz curve deviates significantly from the equality line. The top 10% of the population contributes approximately 38% of the total income. This means that losing just 1/10 of these high-value customers could immediately reduce the total income by nearly 4%. Since Olist is a market platform, repeat purchase behavior is not necessarily present, thus increasing the risk. To reduce this dependency, Olist should introduce a tiered loyalty program for the first and second tiers of customers (these two tiers account for approximately 52% of the total income): for example, providing priority customer service, exclusive seller access rights, or cash refunds for repeat purchases. The goal is to increase the repeat purchase rate of the top 20% of customers, which can both stabilize income and gradually reduce the concentration of the Gini coefficient over time.
+- **Geographic concentration (HHI = 0.18, SP = 37%)**: SP's 37% share creates regional exposure; logistics, economic, or regulatory shocks in São Paulo would be transmitted disproportionately to the full P&L. MG (~12%) and PR (~5%) appear under-represented relative to their share of national GDP (MG ≈ 9% of Brazilian GDP, PR ≈ 6%), making them the two most observable diversification gaps in the data. The pattern raises a question rather than prescribing an answer: is the under-representation a demand-side gap (untapped buyers) or a supply-side gap (insufficient sellers)? The dataset itself cannot distinguish the two.
 
-- **Liquidity Risk (Avg installments = 4.12) **: Installment payments account for approximately 65% of the total revenue, and each order typically involves 4.12 installments. This creates a time gap between order completion and full cash settlement, limiting Olist's ability to quickly reinvest income or respond to short-term operational needs. To change the payment method, Olist should introduce a small pre-payment incentive measure. For example, one-time payment orders can enjoy a discount of 3% to 6% or free delivery benefits. Even if the proportion is slightly adjusted by 10 percentage points (from 65% of installment payments to 55%), it can significantly accelerate the cash recovery speed and shorten the average recovery period, without requiring major structural changes to the platform.
+- **Customer concentration (Gini = 0.475)**: The Lorenz curve's deviation from equality is driven primarily by the top two deciles, which together hold roughly 52% of revenue. The top decile alone holds 38%; losing the top 1% of customers would shift the revenue base by a measurable margin. The pattern surfaces a retention-sensitivity question — at what churn rate among the top decile would the overall revenue base materially shift? — but the dataset does not contain churn observations, so this remains a hypothesis worth testing with longitudinal data the marketplace owns.
+
+- **Cash flow timing (Avg installments = 4.12, installment revenue share ≈ 64%)**: The per-order installment depth (4.12) is modest within Brazil's "12x sem juros" baseline; the dominant cash-timing signal is the share of revenue routed through installments (~64%), which lengthens the working-capital cycle relative to upfront-paid revenue. The observation worth raising: cash collection timing is structurally driven by payment-channel mix, so the installment-share trend is the more informative signal for working-capital sizing than the headcount of installment orders.

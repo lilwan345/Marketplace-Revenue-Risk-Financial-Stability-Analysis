@@ -1,38 +1,38 @@
 # Marketplace Revenue Risk & Financial Stability Analysis
 
-> Quantifying financial concentration and liquidity risk across 100,000+ e-commerce transactions using SQL and R.
+> Quantifying revenue concentration and cash-flow timing across 99,442 Brazilian marketplace orders (2017–2018) using SQL, R, and HTML/JS.
 
 **Client dashboard prototype:** [Open Dashboard](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)  
-**Tableau packaged workbook:** [`Marketplace_Revenue_Risk_Dashboard.twbx`](tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx)  
-**Tableau dashboard package:** [`tableau_data/`](tableau_data/) + [Tableau Dashboard Blueprint](docs/tableau_dashboard_blueprint.md)  
+**Tableau-ready data marts:** [`tableau_data/`](tableau_data/) + [Tableau Dashboard Blueprint](docs/tableau_dashboard_blueprint.md)  
 **Technical report:** [View Full Interactive Report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)
 
 ---
 
 ## What This Project Does
 
-This project builds a financial risk assessment framework on top of the Brazilian E-Commerce Public Dataset (Olist, 2016–2018). It identifies and quantifies four dimensions of revenue risk that matter to marketplace businesses, then packages the results into Tableau-ready datasets for a client-facing dashboard.
+This project builds a financial risk assessment framework on top of the Brazilian E-Commerce Public Dataset (Olist, 2016–2018). It identifies and quantifies four dimensions of revenue risk that matter to marketplace businesses, then packages the results into Tableau-ready data marts for a client-facing dashboard.
+
+**Why this dataset:** Olist is one of the few publicly available marketplace datasets that combines order-level grain with installment payment data and customer-state metadata. That combination is what allows a multi-dimensional financial risk framework — drop the installment column and the cash-flow timing dimension collapses; drop the state column and the geographic concentration dimension collapses. The framework itself is dataset-agnostic and ports directly to any marketplace with comparable transaction-level data.
 
 | Risk Dimension | Key Metric | Finding |
 |---|---|---|
-| Revenue Stability | CV = 0.42 | Moderate volatility; unstable short-term growth |
-| Geographic Concentration | HHI = 0.18 | São Paulo alone drives 37% of total revenue |
-| Customer Concentration | Gini ≈ 0.48 | Top 10% of customers contribute 38% of revenue |
-| Liquidity Risk | Avg. Installments = 4.12 | Installment-heavy structure delays cash collection |
+| Revenue Stability | CV = 0.42 | Moderate volatility; uneven short-term growth |
+| Geographic Concentration | HHI = 0.18 (geographic adaptation) | São Paulo alone drives 37% of total revenue |
+| Customer Concentration | Top decile share = 38% (Gini ≈ 0.48) | Top 10% of customers contribute 38% of revenue |
+| Cash Flow Timing | Avg. Installments = 4.12; installment-share ≈ 64% | Installment-heavy mix lengthens the working-capital cycle |
 
-> Bottom line: Based on findings, three targeted interventions are recommended: promotional calendar optimization to address revenue volatility, seller recruitment in MG and PR to reduce geographic concentration, and a loyalty program targeting the top customer decile to stabilize high-value revenue.
+> Bottom line: The data surfaces four observable patterns worth further investigation — revenue volatility around mid-year and post-holiday windows, geographic dependency on São Paulo with MG/PR under-represented vs. their GDP share, revenue concentration in the top customer decile, and cash-flow timing driven by the installment-share of revenue. Each is quantified above and discussed in context in the report.
+
 ---
 
-## Tableau Dashboard Package
+## Tableau-Ready Data Marts
 
-The repository includes a Tableau-ready dashboard package designed for non-technical clients and business stakeholders.
+The repository ships eight pre-aggregated CSV data marts under [`tableau_data/`](tableau_data/) so any analyst can load them directly into Tableau (or any BI tool) and rebuild the dashboard against the design spec in [docs/tableau_dashboard_blueprint.md](docs/tableau_dashboard_blueprint.md).
 
 | Asset | Purpose |
 |---|---|
 | [`dashboard.html`](dashboard.html) | Client-facing interactive dashboard prototype for GitHub Pages |
-| [`tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx`](tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx) | Tableau packaged workbook with a client overview tab, native sheets, dashboards, and bundled CSV data |
-| [`build_tableau_workbook.R`](build_tableau_workbook.R) | Rebuilds the Tableau packaged workbook from the exported dashboard CSV files |
-| [`export_tableau_data.R`](export_tableau_data.R) | Rebuilds the dashboard CSV files directly from the raw Olist datasets |
+| [`export_tableau_data.R`](export_tableau_data.R) | Rebuilds the data marts directly from the raw Olist datasets |
 | [`tableau_data/monthly_revenue.csv`](tableau_data/monthly_revenue.csv) | Monthly revenue trend, MoM growth, and volatility flags |
 | [`tableau_data/state_revenue.csv`](tableau_data/state_revenue.csv) | State-level revenue concentration and ranking |
 | [`tableau_data/customer_decile_summary.csv`](tableau_data/customer_decile_summary.csv) | Revenue concentration by customer decile |
@@ -40,36 +40,30 @@ The repository includes a Tableau-ready dashboard package designed for non-techn
 | [`tableau_data/payment_summary.csv`](tableau_data/payment_summary.csv) | One-time vs installment revenue exposure |
 | [`tableau_data/installment_distribution.csv`](tableau_data/installment_distribution.csv) | Revenue distribution by installment count |
 | [`tableau_data/kpi_summary.csv`](tableau_data/kpi_summary.csv) | Executive KPI cards with client-friendly explanations |
-| [`tableau_data/action_plan.csv`](tableau_data/action_plan.csv) | Recommended actions and success metrics |
+| [`tableau_data/action_plan.csv`](tableau_data/action_plan.csv) | Suggested action areas and tracking metrics |
 
-Recommended Tableau workbook tabs:
+Suggested Tableau workbook layout (build spec):
 
 1. **Client Overview**: polished non-technical executive view for presentation
-2. **Executive Risk Overview**: KPI cards, risk levels, and recommended actions
+2. **Executive Risk Overview**: KPI cards, risk levels, and patterns to monitor
 3. **Revenue Stability**: monthly revenue trend, MoM growth, and volatility signals
 4. **Concentration Risk**: state concentration, customer deciles, and Lorenz curve
-5. **Liquidity & Action Plan**: installment exposure and practical interventions
+5. **Cash Flow Timing & Action Plan**: installment exposure and suggested next-step areas
 
-See the full build guide in [docs/tableau_dashboard_blueprint.md](docs/tableau_dashboard_blueprint.md), the field definitions in [docs/tableau_data_dictionary.md](docs/tableau_data_dictionary.md), and the workbook notes in [docs/tableau_workbook_notes.md](docs/tableau_workbook_notes.md).
+See the full build guide in [docs/tableau_dashboard_blueprint.md](docs/tableau_dashboard_blueprint.md) and the field definitions in [docs/tableau_data_dictionary.md](docs/tableau_data_dictionary.md).
 
-To regenerate the Tableau datasets:
+To regenerate the data marts:
 
 ```r
 Rscript export_tableau_data.R
 ```
 
-To rebuild the Tableau workbook:
-
-```r
-Rscript build_tableau_workbook.R
-```
-
 ## Key Findings
 
-- **Revenue is volatile short-term**: CV of 0.42 and highly uneven month-over-month growth signal unstable performance, despite an overall upward trend from 2017 to 2018.
-- **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI of 0.18 indicates moderate but meaningful concentration risk.
-- **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top 3 deciles contribute ~64%. The Lorenz curve and Gini coefficient confirm high inequality.
-- **Installment payments create liquidity lag**: Over 60% of revenue comes from installment orders, with an average of 4.12 installments per order — meaning cash is collected gradually, not upfront.
+- **Revenue is volatile short-term**: CV of 0.42 and uneven month-over-month growth indicate unstable performance, despite an overall upward trend from 2017 to 2018.
+- **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI of 0.18 sits in the U.S. DOJ "moderately concentrated" reference band of 0.15–0.25 (HHI here is adapted from its antitrust convention to state-level revenue shares).
+- **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top three deciles contribute ~64%. The Lorenz curve and Gini coefficient (0.48) confirm high revenue inequality.
+- **Installment payment mix lengthens the working-capital cycle**: ~64% of revenue comes from installment orders, with a revenue-weighted average of 4.12 installments per order. The 4.12 figure is modest within Brazil's "12x sem juros" cultural baseline; the dominant cash-timing signal is the installment-share of revenue, not the per-order installment depth.
 
 ---
 
@@ -83,9 +77,12 @@ Rscript build_tableau_workbook.R
 - Calculated CV, HHI, Gini coefficient, and weighted installment count
 - Visualized trends with ggplot2: line charts, bar charts, and Lorenz curve
 
-**Tableau-ready packaging**
-- Exported client-facing KPI, trend, concentration, liquidity, and action-plan datasets
+**Tableau-ready data marts**
+- Exported KPI, trend, concentration, cash-flow timing, and action-plan datasets as standalone CSVs
 - Added dashboard blueprint, tooltip copy, chart mapping, and field dictionary
+
+**HTML/JS dashboard prototype**
+- Built `dashboard.html` directly (vanilla JS + SVG), so reviewers can interact with the deliverable without installing any BI tool
 
 ---
 
@@ -97,11 +94,7 @@ Rscript build_tableau_workbook.R
 ├── dashboard.html        # Client-facing dashboard prototype
 ├── project.sql           # SQL views for data preparation
 ├── analysis.R            # Standalone R script
-├── export_tableau_data.R # Tableau CSV export script
-├── build_tableau_workbook.R
-├── tableau_workbook/
-│   ├── Marketplace_Revenue_Risk_Dashboard.twbx
-│   └── Marketplace_Revenue_Risk_Dashboard.twb
+├── export_tableau_data.R # Tableau-ready CSV export script
 ├── docs/
 │   ├── tableau_dashboard_blueprint.md
 │   └── tableau_data_dictionary.md
@@ -123,9 +116,9 @@ Rscript build_tableau_workbook.R
 
 ## Data Source
 
-[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — ~100,000 orders from 2016 to 2018, covering order details, customer locations, and payment structures.
+[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — 99,442 orders from September 2016 to August 2018, covering order details, customer locations, and payment structures.
 
-> **Note:** This dataset reflects 2016–2018 Brazilian e-commerce operations. Findings are specific to this time period and market context.
+> **Note:** This dataset reflects 2016–2018 Brazilian e-commerce operations. Findings are specific to this time period and market context; some metrics (e.g. average installment count) should be read against the local "12x sem juros" baseline rather than U.S. benchmarks. The framework itself is portable to other marketplaces with comparable transaction-level data.
 
 ---
 

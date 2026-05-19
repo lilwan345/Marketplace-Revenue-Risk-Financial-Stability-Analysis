@@ -6,18 +6,18 @@ This blueprint translates the technical revenue-risk analysis into a client-faci
 
 **Main question:** Is marketplace revenue financially stable enough to support confident planning?
 
-**Short answer:** Revenue is growing, but the business has four manageable risk exposures: volatile monthly revenue, high dependence on Sao Paulo, concentrated high-value customer revenue, and delayed cash collection from installment-heavy payments.
+**Short answer:** Revenue is growing, and four observable patterns shape planning confidence: volatile monthly revenue, high dependence on São Paulo, concentrated high-value customer revenue, and an installment-heavy payment mix that lengthens the working-capital cycle.
 
-## Recommended Workbook Structure
+## Suggested Workbook Structure
 
 Build the Tableau workbook with four dashboard tabs:
 
 1. Executive Risk Overview
 2. Revenue Stability
 3. Concentration Risk
-4. Liquidity & Action Plan
+4. Cash Flow Timing & Action Plan
 
-Use the CSV files in `tableau_data/` as separate data sources. They are already aggregated and do not need joins for the recommended views.
+Use the CSV files in `tableau_data/` as separate data sources. They are already aggregated and do not need joins for the suggested views.
 
 ## Tab 1: Executive Risk Overview
 
@@ -30,7 +30,7 @@ Use the CSV files in `tableau_data/` as separate data sources. They are already 
 | View | Fields | Tableau setup |
 |---|---|---|
 | KPI risk cards | `risk_dimension`, `display_value`, `risk_level`, `client_explanation` | Use `risk_dimension` as card title, `display_value` as large text, color by `risk_level` |
-| Recommended action list | `risk_dimension`, `recommended_action` | Text table or compact action cards sorted by `sort_order` |
+| Patterns-to-monitor list | `risk_dimension`, `pattern_to_monitor` | Text table or compact pattern cards sorted by `sort_order` |
 
 **Suggested risk colors:**
 
@@ -42,7 +42,7 @@ Use the CSV files in `tableau_data/` as separate data sources. They are already 
 
 **Client-facing headline:**
 
-> Revenue is scaling, but stability depends on reducing regional concentration, protecting high-value customers, and improving cash collection timing.
+> Revenue is scaling, and four risk dimensions shape the planning-confidence picture: revenue stability, geographic concentration, customer concentration, and cash-flow timing.
 
 **Tooltip template:**
 
@@ -54,8 +54,8 @@ Risk level: <Risk Level>
 What this means:
 <Client Explanation>
 
-Recommended action:
-<Recommended Action>
+Pattern to monitor:
+<Pattern To Monitor>
 ```
 
 ## Tab 2: Revenue Stability
@@ -121,9 +121,9 @@ Use dashboard highlight actions so clicking a state or decile visually emphasize
 
 > The top customer decile contributes about 38% of revenue, creating retention risk among the highest-value buyers.
 
-## Tab 4: Liquidity & Action Plan
+## Tab 4: Cash Flow Timing & Action Plan
 
-**Purpose:** Translate payment behavior into cash-flow timing risk.
+**Purpose:** Translate payment-mix behavior into a cash-flow timing view.
 
 **Data sources:**
 
@@ -137,11 +137,11 @@ Use dashboard highlight actions so clicking a state or decile visually emphasize
 |---|---|---|
 | Revenue by payment structure | `payment_structure`, `revenue_share` | Donut chart or two-bar comparison |
 | Installment count distribution | `max_installments`, `revenue_share` | Bar chart sorted by installment count |
-| Action plan | `priority`, `action_area`, `suggested_intervention`, `success_metric` | Text table sorted by `priority` |
+| Action plan | `priority`, `focus_area`, `key_pattern`, `tracking_metric` | Text table sorted by `priority` |
 
-**Recommended Tableau parameter: Installment Reduction Scenario**
+**Optional Tableau parameter: Installment-Share Scenario**
 
-Create a parameter named `Installment Revenue Reduction`:
+Create a parameter named `Installment Revenue Reduction` to let users explore how a hypothetical shift in payment mix would affect the cash-timing view:
 
 | Setting | Value |
 |---|---|
@@ -164,7 +164,7 @@ END
 
 **Client-facing interpretation:**
 
-> Even a 10 percentage-point shift from installment payments to one-time payments can improve cash availability without changing total order demand.
+> A 10 percentage-point shift from installment-paid revenue to upfront-paid revenue would compress the working-capital cycle by a proportional amount; the parameter is a what-if lens, not a prescribed target.
 
 ## Layout Guidance
 
@@ -177,8 +177,8 @@ END
 
 ## Suggested Final Tableau Public Title
 
-**Marketplace Revenue Risk Dashboard: Stability, Concentration, and Liquidity**
+**Marketplace Revenue Risk Dashboard: Stability, Concentration, and Cash-Flow Timing**
 
 ## Suggested Tableau Public Description
 
-This dashboard converts 100,000+ Brazilian e-commerce transactions into a client-facing financial risk view. It highlights revenue volatility, geographic concentration, customer dependency, and liquidity exposure from installment-heavy payments, then links each risk to a practical management action.
+This dashboard converts 99,442 Brazilian e-commerce orders (2017–2018) into a client-facing financial risk view. It surfaces revenue volatility, geographic concentration, customer-revenue inequality, and cash-flow timing patterns driven by installment-heavy payments, then links each pattern to a metric the business can monitor.

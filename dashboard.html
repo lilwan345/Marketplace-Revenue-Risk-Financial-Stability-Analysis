@@ -384,7 +384,7 @@
       <h1>Marketplace Revenue Risk Dashboard</h1>
       <p class="lede">
         A business-facing view of revenue stability, geographic dependency, customer concentration,
-        and liquidity timing risk across 100,000+ Brazilian marketplace transactions.
+        and cash-flow timing across 99,442 Brazilian marketplace orders (2017–2018).
       </p>
       <div class="topline" id="kpiCards"></div>
     </div>
@@ -396,7 +396,7 @@
         <button class="tab" type="button" data-view="overview" aria-selected="true">Overview</button>
         <button class="tab" type="button" data-view="stability" aria-selected="false">Revenue Stability</button>
         <button class="tab" type="button" data-view="concentration" aria-selected="false">Concentration Risk</button>
-        <button class="tab" type="button" data-view="liquidity" aria-selected="false">Liquidity & Actions</button>
+        <button class="tab" type="button" data-view="cashflow" aria-selected="false">Cash Flow & Actions</button>
       </div>
     </div>
   </nav>
@@ -406,7 +406,7 @@
       <div class="section-head">
         <div>
           <h2>Executive Risk Overview</h2>
-          <p>Revenue is scaling, but management should watch four risks that affect planning confidence.</p>
+          <p>Revenue is scaling, and four risk dimensions shape the planning-confidence picture.</p>
         </div>
       </div>
       <div class="grid-2">
@@ -416,8 +416,8 @@
           <div class="chart short" id="riskPriorityChart"></div>
         </div>
         <div class="panel">
-          <h3>What The Client Should Do Next</h3>
-          <p class="panel-note">Actions are ordered by practical business impact.</p>
+          <h3>Patterns To Monitor</h3>
+          <p class="panel-note">Each risk dimension surfaces an observable pattern in the underlying data.</p>
           <ul class="insight-list" id="overviewActions"></ul>
         </div>
       </div>
@@ -463,7 +463,7 @@
       <div class="grid-2">
         <div class="panel">
           <h3>Revenue Share By State</h3>
-          <p class="panel-note">SP is the largest regional exposure and should be monitored separately.</p>
+          <p class="panel-note">SP is the largest regional exposure; its trend tracks closely with overall revenue.</p>
           <div class="chart" id="stateRevenueChart"></div>
         </div>
         <div class="panel">
@@ -479,11 +479,11 @@
       </div>
     </section>
 
-    <section id="liquidity" class="view">
+    <section id="cashflow" class="view">
       <div class="section-head">
         <div>
-          <h2>Liquidity & Action Plan</h2>
-          <p>Installment-heavy payment behavior delays cash collection and should shape working-capital planning.</p>
+          <h2>Cash Flow Timing & Action Plan</h2>
+          <p>Installment-heavy payment behavior creates a measurable gap between revenue recognition and cash collection.</p>
         </div>
       </div>
       <div class="grid-2">
@@ -511,10 +511,10 @@
   <script>
     const fallback = {
       kpi_summary: [
-        { sort_order: 1, risk_dimension: "Revenue Stability", display_value: "0.42 CV", risk_level: "Moderate", client_explanation: "Monthly revenue is growing overall, but cash flow is still difficult to forecast month to month.", recommended_action: "Plan promotions around historically weak months and monitor large month-to-month swings." },
-        { sort_order: 2, risk_dimension: "Geographic Concentration", display_value: "0.18 HHI", risk_level: "Moderate", client_explanation: "Revenue is meaningfully exposed to a few states; SP contributes 37% of revenue.", recommended_action: "Expand seller and buyer acquisition in MG and PR to reduce dependency on SP." },
-        { sort_order: 3, risk_dimension: "Customer Concentration", display_value: "0.479 Gini", risk_level: "Elevated", client_explanation: "The highest-spending customer decile contributes 38% of revenue.", recommended_action: "Protect high-value customers with loyalty benefits while broadening mid-tier repeat purchases." },
-        { sort_order: 4, risk_dimension: "Liquidity Risk", display_value: "4.12 installments", risk_level: "Elevated", client_explanation: "Installment-heavy orders contribute 64% of revenue, delaying cash collection.", recommended_action: "Introduce small incentives for one-time payment or lower-installment checkout choices." }
+        { sort_order: 1, risk_dimension: "Revenue Stability", display_value: "0.42 CV", risk_level: "Moderate", client_explanation: "Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence.", pattern_to_monitor: "Negative MoM swings cluster in mid-year and post-holiday months, consistent with Brazilian seasonal demand patterns." },
+        { sort_order: 2, risk_dimension: "Geographic Concentration", display_value: "0.18 HHI", risk_level: "Moderate", client_explanation: "Revenue is concentrated in a few states; SP contributes 37% of revenue, while MG and PR trail below their share of national GDP.", pattern_to_monitor: "MG and PR are the two largest under-represented states relative to their economic size, making them the most observable diversification levers." },
+        { sort_order: 3, risk_dimension: "Customer Concentration", display_value: "0.479 Gini", risk_level: "Elevated", client_explanation: "The highest-spending customer decile contributes 38% of revenue; the top three deciles together account for roughly 64%.", pattern_to_monitor: "The Lorenz curve's deviation from equality is driven mainly by the top two deciles, which together contribute roughly 52% of revenue." },
+        { sort_order: 4, risk_dimension: "Cash Flow Timing", display_value: "4.12 installments", risk_level: "Elevated", client_explanation: "Installment-heavy orders contribute 64% of revenue, lengthening the gap between revenue recognition and cash collection.", pattern_to_monitor: "Average installment count (4.12) is modest within Brazilian '12x sem juros' culture; the dominant driver of cash-timing exposure is the share of revenue routed through installments (~64%), not the per-order installment depth." }
       ],
       monthly_revenue: [
         { month: "2017-01-01", monthly_revenue: 13333.31, mom_growth: null, growth_direction: "Baseline", volatility_signal: "Baseline month" },
@@ -579,10 +579,10 @@
         { max_installments: 10, revenue_share: 0.057 }
       ],
       action_plan: [
-        { priority: 1, action_area: "Revenue calendar", suggested_intervention: "Run mid-year and January retention campaigns to smooth demand shocks.", success_metric: "Reduce revenue CV toward 0.30" },
-        { priority: 2, action_area: "Regional expansion", suggested_intervention: "Prioritize MG and PR seller recruitment and state-level campaigns.", success_metric: "Reduce SP revenue share below 30%" },
-        { priority: 3, action_area: "Customer retention", suggested_intervention: "Launch tiered benefits for the top two customer deciles.", success_metric: "Increase repeat purchase rate in top 20% customers" },
-        { priority: 4, action_area: "Cash collection", suggested_intervention: "Offer 3%-6% one-time payment incentives or free shipping for lower installment counts.", success_metric: "Reduce installment revenue share by 10 percentage points" }
+        { priority: 1, focus_area: "Revenue calendar", key_pattern: "Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.", tracking_metric: "Monthly revenue CV (baseline 0.42)" },
+        { priority: 2, focus_area: "Regional concentration", key_pattern: "MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.", tracking_metric: "SP revenue share (baseline 37%)" },
+        { priority: 3, focus_area: "Customer concentration", key_pattern: "Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.", tracking_metric: "Top decile revenue share (baseline 38%)" },
+        { priority: 4, focus_area: "Cash collection", key_pattern: "Installment-share of revenue (~64%) is the dominant cash-timing signal; per-order installment depth (4.12) is modest by Brazilian baseline.", tracking_metric: "Installment revenue share (baseline 64%)" }
       ]
     };
 
@@ -825,7 +825,7 @@
 
       document.getElementById("overviewActions").innerHTML = data.kpi_summary
         .sort((a, b) => a.sort_order - b.sort_order)
-        .map(item => `<li><strong>${item.risk_dimension}</strong>${item.recommended_action}</li>`)
+        .map(item => `<li><strong>${item.risk_dimension}</strong>${item.pattern_to_monitor}</li>`)
         .join("");
     }
 
@@ -869,15 +869,15 @@
       document.getElementById("actionTable").innerHTML = `
         <table>
           <thead>
-            <tr><th>Priority</th><th>Area</th><th>Intervention</th><th>Success Metric</th></tr>
+            <tr><th>#</th><th>Focus Area</th><th>Key Pattern</th><th>Tracking Metric</th></tr>
           </thead>
           <tbody>
             ${data.action_plan.sort((a, b) => a.priority - b.priority).map(row => `
               <tr>
                 <td><span class="action-rank">${row.priority}</span></td>
-                <td><strong>${row.action_area}</strong></td>
-                <td>${row.suggested_intervention}</td>
-                <td>${row.success_metric}</td>
+                <td><strong>${row.focus_area}</strong></td>
+                <td>${row.key_pattern}</td>
+                <td>${row.tracking_metric}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -890,7 +890,7 @@
         overview: () => renderOverview(data),
         stability: () => renderStability(data),
         concentration: () => renderConcentration(data),
-        liquidity: () => renderLiquidity(data)
+        cashflow: () => renderLiquidity(data)
       };
       document.querySelectorAll(".tab").forEach(tab => {
         tab.addEventListener("click", () => {
