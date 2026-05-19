@@ -93,7 +93,6 @@ Rscript export_tableau_data.R
 ├── index.html            # Rendered GitHub Pages report
 ├── dashboard.html        # Client-facing dashboard prototype
 ├── project.sql           # SQL views for data preparation
-├── analysis.R            # Standalone R script
 ├── export_tableau_data.R # Tableau-ready CSV export script
 ├── docs/
 │   ├── tableau_dashboard_blueprint.md
@@ -111,6 +110,40 @@ Rscript export_tableau_data.R
 ├── olist_orders_dataset.csv
 └── olist_order_payments_dataset.csv
 ```
+
+---
+
+## How to Reproduce
+
+**Quick path — regenerate Tableau-ready data marts only (no database required):**
+
+```r
+Rscript export_tableau_data.R
+```
+
+This reads the three raw `olist_*.csv` files in the repository root, recalculates all metrics, and rewrites `tableau_data/*.csv`.
+
+**Full path — regenerate the technical report (PostgreSQL required):**
+
+1. Import the three raw CSVs into PostgreSQL as tables named `olist_orders_dataset`, `olist_customers_dataset`, and `olist_order_payments_dataset`.
+2. Run [`project.sql`](project.sql) against that database to create the analytical views (`financial_orders`, `state_revenue`, `customer_revenue`, `customer_revenue_decile`, `order_payment_structure`, `monthly_revenue`).
+3. Configure the database connection. The R chunk in [`Analysis.Rmd`](Analysis.Rmd) reads connection parameters from environment variables, with the author's local defaults as fallbacks:
+
+   | Variable | Default | Purpose |
+   |---|---|---|
+   | `OLIST_DB_NAME` | `leowan34` | PostgreSQL database name |
+   | `OLIST_DB_HOST` | `localhost` | PostgreSQL host |
+   | `OLIST_DB_PORT` | `5332` | PostgreSQL port |
+   | `OLIST_DB_USER` | `leowan34` | PostgreSQL user |
+   | `PG_PASSWORD` | (required) | PostgreSQL password |
+
+4. Render the report:
+
+   ```r
+   Rscript -e 'rmarkdown::render("Analysis.Rmd", output_file = "index.html")'
+   ```
+
+R package dependencies are listed at the top of [`Analysis.Rmd`](Analysis.Rmd): `DBI`, `RPostgres`, `ggplot2`, `dplyr`, `ineq`.
 
 ---
 

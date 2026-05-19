@@ -23,10 +23,10 @@ library(ineq)
 
 con <- dbConnect(
   RPostgres::Postgres(),
-  dbname = "leowan34",
-  host = "localhost",
-  port = 5332,
-  user = "leowan34",
+  dbname   = Sys.getenv("OLIST_DB_NAME", "leowan34"),
+  host     = Sys.getenv("OLIST_DB_HOST", "localhost"),
+  port     = as.integer(Sys.getenv("OLIST_DB_PORT", "5332")),
+  user     = Sys.getenv("OLIST_DB_USER", "leowan34"),
   password = Sys.getenv("PG_PASSWORD")
 )
 ```

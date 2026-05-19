@@ -1605,10 +1605,10 @@ library(ineq)
 
 con &lt;- dbConnect(
   RPostgres::Postgres(),
-  dbname = &quot;leowan34&quot;,
-  host = &quot;localhost&quot;,
-  port = 5332,
-  user = &quot;leowan34&quot;,
+  dbname   = Sys.getenv(&quot;OLIST_DB_NAME&quot;, &quot;leowan34&quot;),
+  host     = Sys.getenv(&quot;OLIST_DB_HOST&quot;, &quot;localhost&quot;),
+  port     = as.integer(Sys.getenv(&quot;OLIST_DB_PORT&quot;, &quot;5332&quot;)),
+  user     = Sys.getenv(&quot;OLIST_DB_USER&quot;, &quot;leowan34&quot;),
   password = Sys.getenv(&quot;PG_PASSWORD&quot;)
 )</code></pre>
 </div>
