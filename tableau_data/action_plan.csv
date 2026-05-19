@@ -1,4 +1,4 @@
-"priority","focus_area","business_question","dashboard_view","key_pattern","tracking_metric"
+"priority","action_area","business_question","dashboard_view","suggested_intervention","success_metric"
 1,"Revenue calendar","Which months create the largest revenue planning risk?","Revenue Stability","Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.","Monthly revenue CV (baseline 0.42)"
 2,"Regional concentration","Which states are most under-represented relative to economic size?","Geographic Concentration","MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.","SP revenue share (baseline 37%)"
 3,"Customer concentration","How dependent is revenue on the highest-value buyers?","Customer Concentration","Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.","Top decile revenue share (baseline 38%)"

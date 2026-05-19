@@ -254,7 +254,7 @@ kpi_summary <- data.frame(
     paste0("The highest-spending customer decile contributes ", round(top_decile_share * 100), "% of revenue; the top three deciles together account for roughly 64%."),
     paste0("Installment-heavy orders contribute ", round(installment_share * 100), "% of revenue, lengthening the gap between revenue recognition and cash collection.")
   ),
-  pattern_to_monitor = c(
+  recommended_action = c(
     "Negative MoM swings cluster in mid-year and post-holiday months, consistent with Brazilian seasonal demand patterns.",
     "MG and PR are the two largest under-represented states relative to their economic size, making them the most observable diversification levers.",
     "The Lorenz curve's deviation from equality is driven mainly by the top two deciles, which together contribute roughly 52% of revenue.",
@@ -264,7 +264,7 @@ kpi_summary <- data.frame(
 
 action_plan <- data.frame(
   priority = 1:4,
-  focus_area = c(
+  action_area = c(
     "Revenue calendar",
     "Regional concentration",
     "Customer concentration",
@@ -282,13 +282,13 @@ action_plan <- data.frame(
     "Customer Concentration",
     "Cash Flow Timing"
   ),
-  key_pattern = c(
+  suggested_intervention = c(
     "Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.",
     "MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.",
     "Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.",
     "Installment-share of revenue (~64%) is the dominant cash-timing signal; per-order installment depth (4.12) is modest by Brazilian baseline."
   ),
-  tracking_metric = c(
+  success_metric = c(
     "Monthly revenue CV (baseline 0.42)",
     "SP revenue share (baseline 37%)",
     "Top decile revenue share (baseline 38%)",

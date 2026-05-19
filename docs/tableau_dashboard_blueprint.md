@@ -30,7 +30,7 @@ Use the CSV files in `tableau_data/` as separate data sources. They are already 
 | View | Fields | Tableau setup |
 |---|---|---|
 | KPI risk cards | `risk_dimension`, `display_value`, `risk_level`, `client_explanation` | Use `risk_dimension` as card title, `display_value` as large text, color by `risk_level` |
-| Patterns-to-monitor list | `risk_dimension`, `pattern_to_monitor` | Text table or compact pattern cards sorted by `sort_order` |
+| Patterns-to-monitor list | `risk_dimension`, `recommended_action` | Text table or compact pattern cards sorted by `sort_order` |
 
 **Suggested risk colors:**
 
@@ -55,7 +55,7 @@ What this means:
 <Client Explanation>
 
 Pattern to monitor:
-<Pattern To Monitor>
+<Recommended Action>
 ```
 
 ## Tab 2: Revenue Stability
@@ -137,7 +137,7 @@ Use dashboard highlight actions so clicking a state or decile visually emphasize
 |---|---|---|
 | Revenue by payment structure | `payment_structure`, `revenue_share` | Donut chart or two-bar comparison |
 | Installment count distribution | `max_installments`, `revenue_share` | Bar chart sorted by installment count |
-| Action plan | `priority`, `focus_area`, `key_pattern`, `tracking_metric` | Text table sorted by `priority` |
+| Action plan | `priority`, `action_area`, `suggested_intervention`, `success_metric` | Text table sorted by `priority` |
 
 **Optional Tableau parameter: Installment-Share Scenario**
 

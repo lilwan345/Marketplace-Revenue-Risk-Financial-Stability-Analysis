@@ -86,17 +86,17 @@ Executive KPI cards and client-facing explanations.
 | `display_value` | Formatted KPI value for dashboard cards |
 | `risk_level` | Client-friendly risk level |
 | `client_explanation` | Plain-English interpretation |
-| `pattern_to_monitor` | Descriptive observation about the underlying data pattern (replaces the earlier `recommended_action` column; framing shifted from prescriptive to descriptive to fit BI Analyst voice) |
+| `recommended_action` | Descriptive observation about the underlying data pattern that an analyst would surface for further discussion |
 
 ## action_plan.csv
 
-Client-facing action plan for the final dashboard tab. Note: the columns describe *patterns observed in the data* and *metrics to track*; specific intervention decisions are intentionally left to PMs and business owners.
+Client-facing action plan for the final dashboard tab. Note: the content describes *patterns observed in the data* and *metrics to track*; specific intervention decisions are left to PMs and business owners.
 
 | Field | Meaning |
 |---|---|
-| `priority` | Display order (not a directive ranking) |
-| `focus_area` | Business area where the pattern surfaces |
+| `priority` | Display order |
+| `action_area` | Business area where the pattern surfaces |
 | `business_question` | Question the dashboard helps answer |
 | `dashboard_view` | Relevant dashboard section |
-| `key_pattern` | Descriptive observation about the data pattern |
-| `tracking_metric` | Metric (with baseline value) suitable for ongoing monitoring |
+| `suggested_intervention` | Descriptive observation about the data pattern |
+| `success_metric` | Metric (with baseline value) suitable for ongoing monitoring |
