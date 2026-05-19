@@ -1,0 +1,5 @@
+"priority","action_area","business_question","dashboard_view","suggested_intervention","success_metric"
+1,"Revenue calendar","Which months create the largest revenue planning risk?","Revenue Stability","Run mid-year and January retention campaigns to smooth demand shocks.","Reduce revenue CV toward 0.30"
+2,"Regional expansion","Which states should receive expansion investment?","Geographic Concentration","Prioritize MG and PR seller recruitment and state-level campaigns.","Reduce SP revenue share below 30%"
+3,"Customer retention","How dependent is revenue on the highest-value buyers?","Customer Concentration","Launch tiered benefits for the top two customer deciles.","Increase repeat purchase rate in top 20% customers"
+4,"Cash collection","How much revenue is delayed by installment behavior?","Liquidity Risk","Offer 3%-6% one-time payment incentives or free shipping for lower installment counts.","Reduce installment revenue share by 10 percentage points"

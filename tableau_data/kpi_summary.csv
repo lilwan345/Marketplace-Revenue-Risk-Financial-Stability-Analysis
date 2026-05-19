@@ -1,0 +1,5 @@
+"sort_order","risk_dimension","kpi_name","kpi_value","display_value","risk_level","client_explanation","recommended_action"
+1,"Revenue Stability","Coefficient of Variation",0.4172,"0.42 CV","Moderate","Monthly revenue is growing overall, but cash flow is still difficult to forecast month to month.","Plan promotions around historically weak months and monitor large month-to-month swings."
+2,"Geographic Concentration","Herfindahl-Hirschman Index",0.1831,"0.18 HHI","Moderate","Revenue is meaningfully exposed to a few states; SP contributes 37% of revenue.","Expand seller and buyer acquisition in MG and PR to reduce dependency on SP."
+3,"Customer Concentration","Gini Coefficient",0.4786,"0.479 Gini","Elevated","The highest-spending customer decile contributes 38% of revenue.","Protect high-value customers with loyalty benefits while broadening mid-tier repeat purchases."
+4,"Liquidity Risk","Revenue-weighted Avg. Installments",4.1172,"4.12 installments","Elevated","Installment-heavy orders contribute 64% of revenue, delaying cash collection.","Introduce small incentives for one-time payment or lower-installment checkout choices."
