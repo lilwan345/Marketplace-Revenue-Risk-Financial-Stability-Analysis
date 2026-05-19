@@ -3,6 +3,7 @@
 > Quantifying financial concentration and liquidity risk across 100,000+ e-commerce transactions using SQL and R.
 
 **Client dashboard prototype:** [Open Dashboard](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)  
+**Tableau packaged workbook:** [`Marketplace_Revenue_Risk_Dashboard.twbx`](tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx)  
 **Tableau dashboard package:** [`tableau_data/`](tableau_data/) + [Tableau Dashboard Blueprint](docs/tableau_dashboard_blueprint.md)  
 **Technical report:** [View Full Interactive Report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)
 
@@ -29,6 +30,8 @@ The repository includes a Tableau-ready dashboard package designed for non-techn
 | Asset | Purpose |
 |---|---|
 | [`dashboard.html`](dashboard.html) | Client-facing interactive dashboard prototype for GitHub Pages |
+| [`tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx`](tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx) | Tableau packaged workbook with native sheets, dashboards, and bundled CSV data |
+| [`build_tableau_workbook.R`](build_tableau_workbook.R) | Rebuilds the Tableau packaged workbook from the exported dashboard CSV files |
 | [`export_tableau_data.R`](export_tableau_data.R) | Rebuilds the dashboard CSV files directly from the raw Olist datasets |
 | [`tableau_data/monthly_revenue.csv`](tableau_data/monthly_revenue.csv) | Monthly revenue trend, MoM growth, and volatility flags |
 | [`tableau_data/state_revenue.csv`](tableau_data/state_revenue.csv) | State-level revenue concentration and ranking |
@@ -46,12 +49,18 @@ Recommended Tableau workbook tabs:
 3. **Concentration Risk**: state concentration, customer deciles, and Lorenz curve
 4. **Liquidity & Action Plan**: installment exposure and practical interventions
 
-See the full build guide in [docs/tableau_dashboard_blueprint.md](docs/tableau_dashboard_blueprint.md) and the field definitions in [docs/tableau_data_dictionary.md](docs/tableau_data_dictionary.md).
+See the full build guide in [docs/tableau_dashboard_blueprint.md](docs/tableau_dashboard_blueprint.md), the field definitions in [docs/tableau_data_dictionary.md](docs/tableau_data_dictionary.md), and the workbook notes in [docs/tableau_workbook_notes.md](docs/tableau_workbook_notes.md).
 
 To regenerate the Tableau datasets:
 
 ```r
 Rscript export_tableau_data.R
+```
+
+To rebuild the Tableau workbook:
+
+```r
+Rscript build_tableau_workbook.R
 ```
 
 ## Key Findings
@@ -88,6 +97,10 @@ Rscript export_tableau_data.R
 ├── project.sql           # SQL views for data preparation
 ├── analysis.R            # Standalone R script
 ├── export_tableau_data.R # Tableau CSV export script
+├── build_tableau_workbook.R
+├── tableau_workbook/
+│   ├── Marketplace_Revenue_Risk_Dashboard.twbx
+│   └── Marketplace_Revenue_Risk_Dashboard.twb
 ├── docs/
 │   ├── tableau_dashboard_blueprint.md
 │   └── tableau_data_dictionary.md
