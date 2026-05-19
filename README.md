@@ -16,10 +16,12 @@ This project builds a financial risk assessment framework on top of the Brazilia
 
 | Risk Dimension | Key Metric | Finding |
 |---|---|---|
-| Revenue Stability | CV = 0.42 | Moderate volatility; uneven short-term growth |
+| Revenue Stability | CV = 0.42 (raw); MoM growth volatility = 0.32 (detrended) | Moderate volatility; uneven short-term growth |
 | Geographic Concentration | HHI = 0.18 (geographic adaptation) | São Paulo alone drives 37% of total revenue |
 | Customer Concentration | Top decile share = 38% (Gini ≈ 0.48) | Top 10% of customers contribute 38% of revenue |
 | Cash Flow Timing | Avg. Installments = 4.12; installment-share ≈ 64% | Installment-heavy mix lengthens the working-capital cycle |
+
+> **Note on the CV metric:** Olist was in a ramp-up phase across 2017–2018, so the raw monthly-revenue CV partly reflects the underlying growth trend rather than pure short-term volatility. The detrended MoM growth volatility (0.32) and the CV of trend-removed residuals (0.18) are reported alongside the raw figure in the [technical report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/).
 
 > Bottom line: The data surfaces four observable patterns worth further investigation — revenue volatility around mid-year and post-holiday windows, geographic dependency on São Paulo with MG/PR under-represented vs. their GDP share, revenue concentration in the top customer decile, and cash-flow timing driven by the installment-share of revenue. Each is quantified above and discussed in context in the report.
 

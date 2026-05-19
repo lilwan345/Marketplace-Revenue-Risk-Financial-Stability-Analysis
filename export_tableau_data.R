@@ -215,6 +215,9 @@ gini <- function(x) {
 
 cv_rev <- sd(monthly_revenue$monthly_revenue, na.rm = TRUE) /
   mean(monthly_revenue$monthly_revenue, na.rm = TRUE)
+# Detrended volatility companion: std of MoM growth rates, which separates
+# pure short-term volatility from the underlying ramp-up trend.
+mom_volatility <- sd(monthly_revenue$mom_growth, na.rm = TRUE)
 hhi <- sum(state_revenue$revenue_share^2)
 gini_customer <- gini(customer_revenue$total_revenue)
 weighted_installment <- sum(
@@ -249,7 +252,7 @@ kpi_summary <- data.frame(
   ),
   risk_level = c("Moderate", "Moderate", "Elevated", "Elevated"),
   client_explanation = c(
-    "Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence.",
+    paste0("Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence. The raw CV reading is inflated by the 2017-2018 ramp-up trend; the detrended MoM growth volatility is ", round(mom_volatility, 2), "."),
     paste0("Revenue is concentrated in a few states; SP contributes ", round(sp_share * 100), "% of revenue, while MG and PR trail below their share of national GDP."),
     paste0("The highest-spending customer decile contributes ", round(top_decile_share * 100), "% of revenue; the top three deciles together account for roughly 64%."),
     paste0("Installment-heavy orders contribute ", round(installment_share * 100), "% of revenue, lengthening the gap between revenue recognition and cash collection.")

@@ -56,7 +56,24 @@ cv_rev   <- sd_rev / mean_rev
 cv_rev
 ```
 
-The coefficient of variation (CV = `r round(cv_rev, 2)`) indicates moderate revenue volatility. While the overall trend is upward, revenue is not yet stable enough for reliable short-term forecasting — a meaningful consideration for cash flow planning and budgeting.
+The raw coefficient of variation (CV = `r round(cv_rev, 2)`) is computed directly on monthly revenue. Because Olist was in a ramp-up phase across 2017–2018, this raw CV reflects both the underlying upward trend and the short-term volatility — it overstates how volatile the business actually is around its growth path. Two trend-removed measures isolate the short-term swing component:
+
+```{r}
+# Detrended volatility (1): standard deviation of month-over-month growth rates
+sd_mom <- sd(monthly$mom_growth, na.rm = TRUE)
+
+# Detrended volatility (2): CV of residuals after removing a linear trend
+trend_fit    <- lm(monthly$monthly_revenue ~ seq_along(monthly$monthly_revenue))
+cv_detrended <- sd(residuals(trend_fit)) / mean_rev
+
+sd_mom
+cv_detrended
+```
+
+- **Std deviation of MoM growth rates: `r round(sd_mom, 2)`** — direct measure of period-to-period swing magnitude
+- **CV of monthly revenue residuals after linear detrending: `r round(cv_detrended, 2)`** — what the CV would be on a trend-stationary series
+
+Both detrended measures indicate that the underlying short-term volatility is meaningfully smaller than the raw CV would suggest. MoM growth swings of roughly ±`r round(sd_mom, 2)` (32 percentage points) still represent material forecast uncertainty for a marketplace at this growth stage, but the inflated reading from the raw CV is a known artifact of measuring volatility on a non-stationary series.
 
 ```{r}
 monthly <- monthly %>%
@@ -248,7 +265,7 @@ The revenue-weighted average installment count is approximately `r round(weighte
 
 This analysis quantified four dimensions of financial risk on the Olist Brazilian e-commerce dataset (99,442 orders, 2016–2018):
 
-- **Revenue Stability**: Moderate volatility (CV = 0.42) with uneven short-term growth
+- **Revenue Stability**: Moderate volatility (raw CV = 0.42; detrended MoM growth volatility = 0.32, since the raw CV partly reflects ramp-up trend rather than pure volatility) with uneven short-term growth
 - **Geographic Concentration**: SP drives 37% of revenue (HHI = 0.18 — adapted from antitrust convention to state-level shares), creating regional exposure
 - **Customer Concentration**: Top 10% of customers account for 38% of revenue (Gini = 0.475)
 - **Cash Flow Timing**: Installment-heavy payment structure (~64% of revenue, avg. 4.12 installments) lengthens the working-capital cycle
@@ -262,7 +279,7 @@ Together, these findings describe a business in a growth phase with concentratio
 
 This section reframes the analytical findings into observable patterns and the business questions they raise. Recommendations on what to *do* about each pattern sit with PMs and business owners; the role of this analysis is to surface the patterns and quantify them.
 
-- **Revenue volatility (CV = 0.42)**: The largest negative MoM swings occur in mid-2017 (June–July) and around the December 2017 → January 2018 transition. Mid-year aligns with the post-Carnival demand softening characteristic of Brazilian retail seasonality; the late-year drop aligns with post-Black-Friday / post-holiday fatigue. The pattern suggests revenue volatility has a partially predictable seasonal component, which is observable in the monthly_revenue volatility_signal field. The question worth carrying into a planning conversation: how much of the CV is structurally seasonal versus driven by month-specific shocks?
+- **Revenue volatility (raw CV = 0.42; detrended MoM growth volatility = 0.32)**: The largest negative MoM swings occur in mid-2017 (June–July) and around the December 2017 → January 2018 transition. Mid-year aligns with the post-Carnival demand softening characteristic of Brazilian retail seasonality; the late-year drop aligns with post-Black-Friday / post-holiday fatigue. The pattern suggests revenue volatility has a partially predictable seasonal component, which is observable in the monthly_revenue volatility_signal field. The question worth carrying into a planning conversation: how much of the CV is structurally seasonal versus driven by month-specific shocks?
 
 - **Geographic concentration (HHI = 0.18, SP = 37%)**: SP's 37% share creates regional exposure; logistics, economic, or regulatory shocks in São Paulo would be transmitted disproportionately to the full P&L. MG (~12%) and PR (~5%) appear under-represented relative to their share of national GDP (MG ≈ 9% of Brazilian GDP, PR ≈ 6%), making them the two most observable diversification gaps in the data. The pattern raises a question rather than prescribing an answer: is the under-representation a demand-side gap (untapped buyers) or a supply-side gap (insufficient sellers)? The dataset itself cannot distinguish the two.
 
