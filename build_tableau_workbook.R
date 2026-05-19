@@ -10,6 +10,9 @@ data_dir <- "tableau_data"
 out_dir <- "tableau_workbook"
 package_dir <- file.path(out_dir, "package")
 package_data_dir <- file.path(package_dir, "Data")
+package_image_dir <- file.path(package_dir, "Image")
+asset_dir <- file.path(out_dir, "assets")
+client_overview_image <- "client_dashboard_overview.png"
 twb_name <- "Marketplace_Revenue_Risk_Dashboard.twb"
 twbx_name <- "Marketplace_Revenue_Risk_Dashboard.twbx"
 
@@ -32,6 +35,18 @@ csv_files <- c(
 
 for (file in csv_files) {
   file.copy(file.path(data_dir, file), file.path(package_data_dir, file), overwrite = TRUE)
+}
+
+has_client_overview_image <- file.exists(file.path(asset_dir, client_overview_image))
+if (has_client_overview_image) {
+  dir.create(package_image_dir, recursive = TRUE, showWarnings = FALSE)
+  file.copy(
+    file.path(asset_dir, client_overview_image),
+    file.path(package_image_dir, client_overview_image),
+    overwrite = TRUE
+  )
+} else {
+  warning("Client overview image not found; Tableau workbook will be built without the image-first dashboard.")
 }
 
 xml_escape <- function(x) {
@@ -359,7 +374,37 @@ make_dashboard <- function(name, zones) {
   )
 }
 
+make_client_overview_dashboard <- function() {
+  image_path <- file.path("Image", client_overview_image)
+  paste(
+    "    <dashboard enable-sort-zone-taborder='true' name='Client Overview'>",
+    "      <style />",
+    "      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />",
+    "      <zones>",
+    "        <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>",
+    sprintf("          <zone alt-text='Client-friendly overview of marketplace revenue risk dashboard' h='98000' id='3' is-scaled='1' param='%s' type-v2='bitmap' w='98400' x='800' y='1000'>", xml_escape(image_path)),
+    "            <zone-style>",
+    "              <format attr='border-color' value='#000000' />",
+    "              <format attr='border-style' value='none' />",
+    "              <format attr='border-width' value='0' />",
+    "              <format attr='margin' value='4' />",
+    "            </zone-style>",
+    "          </zone>",
+    "          <zone-style>",
+    "            <format attr='border-color' value='#000000' />",
+    "            <format attr='border-style' value='none' />",
+    "            <format attr='border-width' value='0' />",
+    "            <format attr='margin' value='8' />",
+    "          </zone-style>",
+    "        </zone>",
+    "      </zones>",
+    "    </dashboard>",
+    sep = "\n"
+  )
+}
+
 dashboards <- c(
+  if (has_client_overview_image) make_client_overview_dashboard(),
   make_dashboard("Executive Risk Overview", list(
     list(name = "KPI Cards", x = 0, y = 6000, w = 100000, h = 33000),
     list(name = "Risk Priority Map", x = 0, y = 41000, w = 56000, h = 57000),
@@ -388,8 +433,15 @@ worksheet_windows <- paste(sprintf(
 
 dashboard_windows <- paste(sprintf(
   "    <window class='dashboard' maximized='true' name='%s'><viewpoints>%s</viewpoints><active id='-1' /></window>",
-  xml_escape(c("Liquidity & Action Plan", "Concentration Risk", "Revenue Stability", "Executive Risk Overview")),
+  xml_escape(c(
+    if (has_client_overview_image) "Client Overview",
+    "Liquidity & Action Plan",
+    "Concentration Risk",
+    "Revenue Stability",
+    "Executive Risk Overview"
+  )),
   c(
+    if (has_client_overview_image) "",
     "<viewpoint name='Payment Structure' /><viewpoint name='Installment Distribution' /><viewpoint name='Action Plan' />"
     ,
     "<viewpoint name='Revenue Share by State' /><viewpoint name='Customer Decile Revenue' /><viewpoint name='Customer Lorenz Curve' />",
@@ -430,7 +482,11 @@ setwd(package_dir)
 if (file.exists(file.path("..", twbx_name))) {
   unlink(file.path("..", twbx_name))
 }
-zip::zipr(file.path("..", twbx_name), c(twb_name, "Data"))
+zip_contents <- c(twb_name, "Data")
+if (has_client_overview_image) {
+  zip_contents <- c(zip_contents, "Image")
+}
+zip::zipr(file.path("..", twbx_name), zip_contents)
 setwd(old_wd)
 
 file.copy(file.path(package_dir, twb_name), file.path(out_dir, twb_name), overwrite = TRUE)

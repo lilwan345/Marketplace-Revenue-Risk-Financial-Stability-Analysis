@@ -7,8 +7,10 @@ The repository includes a generated Tableau packaged workbook:
 ## What Is Included
 
 - Bundled CSV data sources from `tableau_data/`
+- A `Client Overview` dashboard tab with a polished client-facing snapshot from `dashboard.html`
 - Native Tableau worksheets for KPI cards, revenue trend, MoM growth, state concentration, customer deciles, Lorenz curve, payment structure, installment distribution, and action plan
-- Four dashboard tabs:
+- Five dashboard tabs:
+  - Client Overview
   - Executive Risk Overview
   - Revenue Stability
   - Concentration Risk
@@ -23,6 +25,8 @@ tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx
 ```
 
 The workbook is packaged, so the CSV files are embedded inside the `.twbx` and should not require reconnecting to local data.
+
+Open `Client Overview` first when presenting to a non-technical audience. It is designed as the readable executive view, while the native Tableau sheets remain available for drill-down and validation.
 
 ## How To Rebuild
 

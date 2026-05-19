@@ -30,7 +30,7 @@ The repository includes a Tableau-ready dashboard package designed for non-techn
 | Asset | Purpose |
 |---|---|
 | [`dashboard.html`](dashboard.html) | Client-facing interactive dashboard prototype for GitHub Pages |
-| [`tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx`](tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx) | Tableau packaged workbook with native sheets, dashboards, and bundled CSV data |
+| [`tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx`](tableau_workbook/Marketplace_Revenue_Risk_Dashboard.twbx) | Tableau packaged workbook with a client overview tab, native sheets, dashboards, and bundled CSV data |
 | [`build_tableau_workbook.R`](build_tableau_workbook.R) | Rebuilds the Tableau packaged workbook from the exported dashboard CSV files |
 | [`export_tableau_data.R`](export_tableau_data.R) | Rebuilds the dashboard CSV files directly from the raw Olist datasets |
 | [`tableau_data/monthly_revenue.csv`](tableau_data/monthly_revenue.csv) | Monthly revenue trend, MoM growth, and volatility flags |
@@ -44,10 +44,11 @@ The repository includes a Tableau-ready dashboard package designed for non-techn
 
 Recommended Tableau workbook tabs:
 
-1. **Executive Risk Overview**: KPI cards, risk levels, and recommended actions
-2. **Revenue Stability**: monthly revenue trend, MoM growth, and volatility signals
-3. **Concentration Risk**: state concentration, customer deciles, and Lorenz curve
-4. **Liquidity & Action Plan**: installment exposure and practical interventions
+1. **Client Overview**: polished non-technical executive view for presentation
+2. **Executive Risk Overview**: KPI cards, risk levels, and recommended actions
+3. **Revenue Stability**: monthly revenue trend, MoM growth, and volatility signals
+4. **Concentration Risk**: state concentration, customer deciles, and Lorenz curve
+5. **Liquidity & Action Plan**: installment exposure and practical interventions
 
 See the full build guide in [docs/tableau_dashboard_blueprint.md](docs/tableau_dashboard_blueprint.md), the field definitions in [docs/tableau_data_dictionary.md](docs/tableau_data_dictionary.md), and the workbook notes in [docs/tableau_workbook_notes.md](docs/tableau_workbook_notes.md).
 

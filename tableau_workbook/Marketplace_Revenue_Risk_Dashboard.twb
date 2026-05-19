@@ -681,6 +681,28 @@
     </worksheet>
   </worksheets>
   <dashboards>
+    <dashboard enable-sort-zone-taborder='true' name='Client Overview'>
+      <style />
+      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />
+      <zones>
+        <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>
+          <zone alt-text='Client-friendly overview of marketplace revenue risk dashboard' h='98000' id='3' is-scaled='1' param='Image/client_dashboard_overview.png' type-v2='bitmap' w='98400' x='800' y='1000'>
+            <zone-style>
+              <format attr='border-color' value='#000000' />
+              <format attr='border-style' value='none' />
+              <format attr='border-width' value='0' />
+              <format attr='margin' value='4' />
+            </zone-style>
+          </zone>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='none' />
+            <format attr='border-width' value='0' />
+            <format attr='margin' value='8' />
+          </zone-style>
+        </zone>
+      </zones>
+    </dashboard>
     <dashboard name='Executive Risk Overview'>
       <layout-options>
         <title><formatted-text>
@@ -746,6 +768,7 @@
     </dashboard>
   </dashboards>
   <windows source-height='32'>
+    <window class='dashboard' maximized='true' name='Client Overview'><viewpoints></viewpoints><active id='-1' /></window>
     <window class='dashboard' maximized='true' name='Liquidity &amp; Action Plan'><viewpoints><viewpoint name='Payment Structure' /><viewpoint name='Installment Distribution' /><viewpoint name='Action Plan' /></viewpoints><active id='-1' /></window>
     <window class='dashboard' maximized='true' name='Concentration Risk'><viewpoints><viewpoint name='Revenue Share by State' /><viewpoint name='Customer Decile Revenue' /><viewpoint name='Customer Lorenz Curve' /></viewpoints><active id='-1' /></window>
     <window class='dashboard' maximized='true' name='Revenue Stability'><viewpoints><viewpoint name='Monthly Revenue Trend' /><viewpoint name='MoM Growth' /></viewpoints><active id='-1' /></window>
