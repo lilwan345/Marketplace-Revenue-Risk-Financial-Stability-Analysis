@@ -63,7 +63,7 @@ Rscript export_tableau_data.R
 ## Key Findings
 
 - **Revenue is volatile short-term**: CV of 0.42 and uneven month-over-month growth indicate unstable performance, despite an overall upward trend from 2017 to 2018.
-- **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI of 0.18 sits in the U.S. DOJ "moderately concentrated" reference band of 0.15–0.25 (HHI here is adapted from its antitrust convention to state-level revenue shares).
+- **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI on state-level revenue shares lands at 0.18, signalling meaningful but non-extreme concentration. (HHI is adapted here from its antitrust convention, where it scores firm market shares; the antitrust interpretive bands are not directly transferable to geographic revenue shares, so the value is reported descriptively rather than benchmarked against a regulatory threshold.)
 - **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top three deciles contribute ~64%. The Lorenz curve and Gini coefficient (0.48) confirm high revenue inequality.
 - **Installment payment mix lengthens the working-capital cycle**: ~64% of revenue comes from installment orders, with a revenue-weighted average of 4.12 installments per order. The 4.12 figure is modest within Brazil's "12x sem juros" cultural baseline; the dominant cash-timing signal is the installment-share of revenue, not the per-order installment depth.
 
@@ -76,7 +76,8 @@ Rscript export_tableau_data.R
 - Applied window functions (NTILE, SUM OVER) for segmentation and ranking
 
 **R (RMarkdown)**
-- Calculated CV, HHI, Gini coefficient, and weighted installment count
+- Computed four non-overlapping risk metrics so each maps to a distinct dimension of marketplace revenue risk: CV for revenue stability, HHI (geographic adaptation) for state-level concentration, Gini for customer-level concentration, and revenue-weighted installment count for cash-flow timing
+- Reported a detrended companion to the raw CV (MoM growth volatility, residual CV after linear detrending) so the headline volatility figure is not inflated by the 2017–2018 ramp-up trend
 - Visualized trends with ggplot2: line charts, bar charts, and Lorenz curve
 
 **Tableau-ready data marts**
@@ -153,7 +154,9 @@ R package dependencies are listed at the top of [`Analysis.Rmd`](Analysis.Rmd): 
 
 [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — 99,442 orders from September 2016 to August 2018, covering order details, customer locations, and payment structures.
 
-> **Note:** This dataset reflects 2016–2018 Brazilian e-commerce operations. Findings are specific to this time period and market context; some metrics (e.g. average installment count) should be read against the local "12x sem juros" baseline rather than U.S. benchmarks. The framework itself is portable to other marketplaces with comparable transaction-level data.
+> **Analysis window:** The raw dataset spans September 2016 to August 2018, but late-2016 contains only a partial month of activity. The analysis filters to orders with `order_purchase_timestamp >= 2017-01-01` so the monthly-revenue series, CV, and MoM growth volatility are measured on full months only. Headline figures throughout the report reference the 2017–2018 analysis window.
+
+> **Note:** Findings are specific to this time period and market context; some metrics (e.g. average installment count) should be read against the local "12x sem juros" baseline rather than U.S. benchmarks. The framework itself is portable to other marketplaces with comparable transaction-level data.
 
 ---
 

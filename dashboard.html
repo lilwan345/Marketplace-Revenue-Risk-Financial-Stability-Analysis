@@ -511,10 +511,10 @@
   <script>
     const fallback = {
       kpi_summary: [
-        { sort_order: 1, risk_dimension: "Revenue Stability", display_value: "0.42 CV", risk_level: "Moderate", client_explanation: "Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence. The raw CV reading is inflated by the 2017-2018 ramp-up trend; the detrended MoM growth volatility is 0.32.", recommended_action: "Negative MoM swings cluster in mid-year and post-holiday months, consistent with Brazilian seasonal demand patterns." },
-        { sort_order: 2, risk_dimension: "Geographic Concentration", display_value: "0.18 HHI", risk_level: "Moderate", client_explanation: "Revenue is concentrated in a few states; SP contributes 37% of revenue, while MG and PR trail below their share of national GDP.", recommended_action: "MG and PR are the two largest under-represented states relative to their economic size, making them the most observable diversification levers." },
-        { sort_order: 3, risk_dimension: "Customer Concentration", display_value: "0.479 Gini", risk_level: "Elevated", client_explanation: "The highest-spending customer decile contributes 38% of revenue; the top three deciles together account for roughly 64%.", recommended_action: "The Lorenz curve's deviation from equality is driven mainly by the top two deciles, which together contribute roughly 52% of revenue." },
-        { sort_order: 4, risk_dimension: "Cash Flow Timing", display_value: "4.12 installments", risk_level: "Elevated", client_explanation: "Installment-heavy orders contribute 64% of revenue, lengthening the gap between revenue recognition and cash collection.", recommended_action: "Average installment count (4.12) is modest within Brazilian '12x sem juros' culture; the dominant driver of cash-timing exposure is the share of revenue routed through installments (~64%), not the per-order installment depth." }
+        { sort_order: 1, risk_dimension: "Revenue Stability", display_value: "0.42 CV", risk_level: "Moderate", client_explanation: "Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence. The raw CV reading is inflated by the 2017-2018 ramp-up trend; the detrended MoM growth volatility is 0.32.", pattern_observation: "Negative MoM swings cluster in mid-year and post-holiday months, consistent with Brazilian seasonal demand patterns." },
+        { sort_order: 2, risk_dimension: "Geographic Concentration", display_value: "0.18 HHI", risk_level: "Moderate", client_explanation: "Revenue is concentrated in a few states; SP contributes 37% of revenue, while MG and PR trail below their share of national GDP.", pattern_observation: "MG and PR are the two largest under-represented states relative to their economic size, making them the most observable diversification levers." },
+        { sort_order: 3, risk_dimension: "Customer Concentration", display_value: "0.479 Gini", risk_level: "Elevated", client_explanation: "The highest-spending customer decile contributes 38% of revenue; the top three deciles together account for roughly 64%.", pattern_observation: "The Lorenz curve's deviation from equality is driven mainly by the top two deciles, which together contribute roughly 52% of revenue." },
+        { sort_order: 4, risk_dimension: "Cash Flow Timing", display_value: "4.12 installments", risk_level: "Elevated", client_explanation: "Installment-heavy orders contribute 64% of revenue, lengthening the gap between revenue recognition and cash collection.", pattern_observation: "Average installment count (4.12) is modest within Brazilian '12x sem juros' culture; the dominant driver of cash-timing exposure is the share of revenue routed through installments (~64%), not the per-order installment depth." }
       ],
       monthly_revenue: [
         { month: "2017-01-01", monthly_revenue: 13333.31, mom_growth: null, growth_direction: "Baseline", volatility_signal: "Baseline month" },
@@ -579,10 +579,10 @@
         { max_installments: 10, revenue_share: 0.057 }
       ],
       action_plan: [
-        { priority: 1, action_area: "Revenue calendar", suggested_intervention: "Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.", success_metric: "Monthly revenue CV (baseline 0.42)" },
-        { priority: 2, action_area: "Regional concentration", suggested_intervention: "MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.", success_metric: "SP revenue share (baseline 37%)" },
-        { priority: 3, action_area: "Customer concentration", suggested_intervention: "Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.", success_metric: "Top decile revenue share (baseline 38%)" },
-        { priority: 4, action_area: "Cash collection", suggested_intervention: "Installment-share of revenue (~64%) is the dominant cash-timing signal; per-order installment depth (4.12) is modest by Brazilian baseline.", success_metric: "Installment revenue share (baseline 64%)" }
+        { priority: 1, action_area: "Revenue calendar", pattern_observation: "Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.", tracking_metric: "Monthly revenue CV (baseline 0.42)" },
+        { priority: 2, action_area: "Regional concentration", pattern_observation: "MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.", tracking_metric: "SP revenue share (baseline 37%)" },
+        { priority: 3, action_area: "Customer concentration", pattern_observation: "Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.", tracking_metric: "Top decile revenue share (baseline 38%)" },
+        { priority: 4, action_area: "Cash collection", pattern_observation: "Installment-share of revenue (~64%) is the dominant cash-timing signal; per-order installment depth (4.12) is modest by Brazilian baseline.", tracking_metric: "Installment revenue share (baseline 64%)" }
       ]
     };
 
@@ -825,7 +825,7 @@
 
       document.getElementById("overviewActions").innerHTML = data.kpi_summary
         .sort((a, b) => a.sort_order - b.sort_order)
-        .map(item => `<li><strong>${item.risk_dimension}</strong>${item.recommended_action}</li>`)
+        .map(item => `<li><strong>${item.risk_dimension}</strong>${item.pattern_observation}</li>`)
         .join("");
     }
 
@@ -876,8 +876,8 @@
               <tr>
                 <td><span class="action-rank">${row.priority}</span></td>
                 <td><strong>${row.action_area}</strong></td>
-                <td>${row.suggested_intervention}</td>
-                <td>${row.success_metric}</td>
+                <td>${row.pattern_observation}</td>
+                <td>${row.tracking_metric}</td>
               </tr>
             `).join("")}
           </tbody>
