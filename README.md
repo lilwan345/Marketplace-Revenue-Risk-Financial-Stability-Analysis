@@ -62,6 +62,12 @@ Rscript export_tableau_data.R
 
 ## Key Findings
 
+| Monthly Revenue Trend (2017–2018) | Customer Revenue Distribution (Lorenz) |
+|---|---|
+| ![Monthly revenue grows steadily through 2017, spikes in late 2017, then plateaus with month-to-month swings through 2018](assets/monthly_revenue_trend.png) | ![Lorenz curve bows substantially below the equality line, indicating that the top decile of customers concentrates a disproportionate share of revenue](assets/customer_lorenz_curve.png) |
+
+*Left: the ramp-up trend that inflates the raw CV (0.42) and motivates reporting a detrended companion (MoM growth volatility 0.32). Right: the Lorenz curve underlying the Gini of 0.48 — the bow away from the diagonal is the customer-concentration signal.*
+
 - **Revenue is volatile short-term**: CV of 0.42 and uneven month-over-month growth indicate unstable performance, despite an overall upward trend from 2017 to 2018.
 - **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI on state-level revenue shares lands at 0.18, signalling meaningful but non-extreme concentration. (HHI is adapted here from its antitrust convention, where it scores firm market shares; the antitrust interpretive bands are not directly transferable to geographic revenue shares, so the value is reported descriptively rather than benchmarked against a regulatory threshold.)
 - **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top three deciles contribute ~64%. The Lorenz curve and Gini coefficient (0.48) confirm high revenue inequality.
@@ -109,14 +115,18 @@ Rscript export_tableau_data.R
 │   ├── payment_summary.csv
 │   ├── installment_distribution.csv
 │   └── action_plan.csv
-├── olist_customers_dataset.csv
-├── olist_orders_dataset.csv
-└── olist_order_payments_dataset.csv
+└── assets/                # README chart exports
 ```
+
+> The three raw Olist source files (`olist_orders_dataset.csv`, `olist_customers_dataset.csv`, `olist_order_payments_dataset.csv`) are intentionally not tracked in git — they come from the public Kaggle dataset (see [Data Source](#data-source)). Download them once into the repo root and the analysis runs from there.
 
 ---
 
 ## How to Reproduce
+
+**Step 0 — download the raw Olist files (one-time):**
+
+The raw `olist_orders_dataset.csv`, `olist_customers_dataset.csv`, and `olist_order_payments_dataset.csv` files are not tracked in this repo. Download them from the [Kaggle dataset page](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) and place all three in the repository root.
 
 **Quick path — regenerate Tableau-ready data marts only (no database required):**
 

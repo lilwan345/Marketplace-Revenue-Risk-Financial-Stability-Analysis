@@ -1,0 +1,14 @@
+# Raw Olist source data (download from Kaggle — see README "Data Source")
+olist_orders_dataset.csv
+olist_customers_dataset.csv
+olist_order_payments_dataset.csv
+
+# R session artifacts
+.Rhistory
+.RData
+.Rproj.user/
+
+# OS / IDE noise
+.DS_Store
+.idea/
+.vscode/
