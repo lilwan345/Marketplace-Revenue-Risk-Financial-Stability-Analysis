@@ -384,7 +384,7 @@
       <h1>Marketplace Revenue Risk Dashboard</h1>
       <p class="lede">
         A business-facing view of revenue stability, geographic dependency, customer concentration,
-        and cash-flow timing across 99,442 Brazilian marketplace orders (2017–2018).
+        and cash-flow timing across 96,477 delivered orders on a Brazilian marketplace (2017–2018).
       </p>
       <div class="topline" id="kpiCards"></div>
     </div>
@@ -475,7 +475,7 @@
       <div class="panel" style="margin-top: 16px;">
         <h3>Lorenz Curve: Customer Revenue Inequality</h3>
         <p class="panel-note">The farther the line falls below equality, the more revenue depends on a small customer group.</p>
-        <div class="chart short" id="lorenzChart"></div>
+        <div class="chart" id="lorenzChart" style="height: 360px;"></div>
       </div>
     </section>
 
@@ -511,78 +511,212 @@
   <script>
     const fallback = {
       kpi_summary: [
-        { sort_order: 1, risk_dimension: "Revenue Stability", display_value: "0.42 CV", risk_level: "Moderate", client_explanation: "Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence. The raw CV reading is inflated by the 2017-2018 ramp-up trend; the detrended MoM growth volatility is 0.32.", pattern_observation: "Negative MoM swings cluster in mid-year and post-holiday months, consistent with Brazilian seasonal demand patterns." },
-        { sort_order: 2, risk_dimension: "Geographic Concentration", display_value: "0.18 HHI", risk_level: "Moderate", client_explanation: "Revenue is concentrated in a few states; SP contributes 37% of revenue, while MG and PR trail below their share of national GDP.", pattern_observation: "MG and PR are the two largest under-represented states relative to their economic size, making them the most observable diversification levers." },
-        { sort_order: 3, risk_dimension: "Customer Concentration", display_value: "0.479 Gini", risk_level: "Elevated", client_explanation: "The highest-spending customer decile contributes 38% of revenue; the top three deciles together account for roughly 64%.", pattern_observation: "The Lorenz curve's deviation from equality is driven mainly by the top two deciles, which together contribute roughly 52% of revenue." },
-        { sort_order: 4, risk_dimension: "Cash Flow Timing", display_value: "4.12 installments", risk_level: "Elevated", client_explanation: "Installment-heavy orders contribute 64% of revenue, lengthening the gap between revenue recognition and cash collection.", pattern_observation: "Average installment count (4.12) is modest within Brazilian '12x sem juros' culture; the dominant driver of cash-timing exposure is the share of revenue routed through installments (~64%), not the per-order installment depth." }
+        {"sort_order": 1, "risk_dimension": "Revenue Stability", "kpi_name": "Coefficient of Variation", "kpi_value": 0.4172, "display_value": "0.42 CV", "risk_level": "Moderate", "client_explanation": "Monthly revenue is growing overall, but month-to-month swings remain large enough to limit short-term forecast confidence. The raw CV reading is inflated by the 2017-2018 ramp-up trend; the detrended MoM growth volatility is 0.32.", "pattern_observation": "Negative MoM swings cluster in mid-year and post-holiday months, consistent with Brazilian seasonal demand patterns."},
+        {"sort_order": 2, "risk_dimension": "Geographic Concentration", "kpi_name": "Herfindahl-Hirschman Index (geographic adaptation)", "kpi_value": 0.1831, "display_value": "0.18 HHI", "risk_level": "Moderate", "client_explanation": "Revenue is concentrated in a few states; SP contributes 37% of revenue, while MG and PR trail below their share of national GDP.", "pattern_observation": "MG and PR are the two largest under-represented states relative to their economic size, making them the most observable diversification levers."},
+        {"sort_order": 3, "risk_dimension": "Customer Concentration", "kpi_name": "Gini Coefficient (customer revenue inequality)", "kpi_value": 0.475, "display_value": "0.475 Gini", "risk_level": "Elevated", "client_explanation": "The highest-spending customer decile contributes 38% of revenue; the top three deciles together account for roughly 64%.", "pattern_observation": "The Lorenz curve's deviation from equality is driven mainly by the top two deciles, which together contribute roughly 54% of revenue."},
+        {"sort_order": 4, "risk_dimension": "Cash Flow Timing", "kpi_name": "Revenue-weighted Avg. Installments", "kpi_value": 4.1172, "display_value": "4.12 installments", "risk_level": "Elevated", "client_explanation": "Installment-heavy orders contribute 64% of revenue, lengthening the gap between revenue recognition and cash collection.", "pattern_observation": "Average installment count (4.12) is modest within Brazilian '12x sem juros' culture; the dominant driver of cash-timing exposure is the share of revenue routed through installments (~64%), not the per-order installment depth."}
       ],
       monthly_revenue: [
-        { month: "2017-01-01", monthly_revenue: 13333.31, mom_growth: null, growth_direction: "Baseline", volatility_signal: "Baseline month" },
-        { month: "2017-02-01", monthly_revenue: 29198.88, mom_growth: 1.1899, growth_direction: "Growth", volatility_signal: "High swing" },
-        { month: "2017-03-01", monthly_revenue: 44995.41, mom_growth: 0.541, growth_direction: "Growth", volatility_signal: "High swing" },
-        { month: "2017-04-01", monthly_revenue: 41792.36, mom_growth: -0.0712, growth_direction: "Decline", volatility_signal: "Normal movement" },
-        { month: "2017-05-01", monthly_revenue: 59244.78, mom_growth: 0.4176, growth_direction: "Growth", volatility_signal: "High swing" },
-        { month: "2017-06-01", monthly_revenue: 51170.62, mom_growth: -0.1363, growth_direction: "Decline", volatility_signal: "Normal movement" },
-        { month: "2017-07-01", monthly_revenue: 59283.9, mom_growth: 0.1586, growth_direction: "Growth", volatility_signal: "Normal movement" },
-        { month: "2017-08-01", monthly_revenue: 67490.67, mom_growth: 0.1384, growth_direction: "Growth", volatility_signal: "Normal movement" },
-        { month: "2017-09-01", monthly_revenue: 72783.18, mom_growth: 0.0784, growth_direction: "Growth", volatility_signal: "Normal movement" },
-        { month: "2017-10-01", monthly_revenue: 77950.56, mom_growth: 0.071, growth_direction: "Growth", volatility_signal: "Normal movement" },
-        { month: "2017-11-01", monthly_revenue: 119488.94, mom_growth: 0.5329, growth_direction: "Growth", volatility_signal: "High swing" },
-        { month: "2017-12-01", monthly_revenue: 878401.48, mom_growth: 6.3513, growth_direction: "Growth", volatility_signal: "High swing" },
-        { month: "2018-01-01", monthly_revenue: 1115004.18, mom_growth: 0.2694, growth_direction: "Growth", volatility_signal: "High swing" },
-        { month: "2018-02-01", monthly_revenue: 992463.34, mom_growth: -0.1099, growth_direction: "Decline", volatility_signal: "Normal movement" },
-        { month: "2018-03-01", monthly_revenue: 1159652.12, mom_growth: 0.1685, growth_direction: "Growth", volatility_signal: "Normal movement" },
-        { month: "2018-04-01", monthly_revenue: 1160785.48, mom_growth: 0.001, growth_direction: "Growth", volatility_signal: "Normal movement" },
-        { month: "2018-05-01", monthly_revenue: 1153982.15, mom_growth: -0.0059, growth_direction: "Decline", volatility_signal: "Normal movement" },
-        { month: "2018-06-01", monthly_revenue: 1023880.5, mom_growth: -0.1127, growth_direction: "Decline", volatility_signal: "Normal movement" },
-        { month: "2018-07-01", monthly_revenue: 1066540.75, mom_growth: 0.0417, growth_direction: "Growth", volatility_signal: "Normal movement" },
-        { month: "2018-08-01", monthly_revenue: 1022425.32, mom_growth: -0.0414, growth_direction: "Decline", volatility_signal: "Normal movement" }
+        {"month": "2017-01-01", "monthly_revenue": 127545.67, "mom_growth": "NA", "growth_direction": "Baseline", "volatility_signal": "Baseline month"},
+        {"month": "2017-02-01", "monthly_revenue": 271298.65, "mom_growth": 1.1271, "growth_direction": "Growth", "volatility_signal": "High swing"},
+        {"month": "2017-03-01", "monthly_revenue": 414369.39, "mom_growth": 0.5274, "growth_direction": "Growth", "volatility_signal": "High swing"},
+        {"month": "2017-04-01", "monthly_revenue": 390952.18, "mom_growth": -0.0565, "growth_direction": "Decline", "volatility_signal": "Normal movement"},
+        {"month": "2017-05-01", "monthly_revenue": 567066.73, "mom_growth": 0.4505, "growth_direction": "Growth", "volatility_signal": "High swing"},
+        {"month": "2017-06-01", "monthly_revenue": 490225.6, "mom_growth": -0.1355, "growth_direction": "Decline", "volatility_signal": "Normal movement"},
+        {"month": "2017-07-01", "monthly_revenue": 566403.93, "mom_growth": 0.1554, "growth_direction": "Growth", "volatility_signal": "Normal movement"},
+        {"month": "2017-08-01", "monthly_revenue": 646000.61, "mom_growth": 0.1405, "growth_direction": "Growth", "volatility_signal": "Normal movement"},
+        {"month": "2017-09-01", "monthly_revenue": 701169.99, "mom_growth": 0.0854, "growth_direction": "Growth", "volatility_signal": "Normal movement"},
+        {"month": "2017-10-01", "monthly_revenue": 751140.27, "mom_growth": 0.0713, "growth_direction": "Growth", "volatility_signal": "Normal movement"},
+        {"month": "2017-11-01", "monthly_revenue": 1153528.05, "mom_growth": 0.5357, "growth_direction": "Growth", "volatility_signal": "High swing"},
+        {"month": "2017-12-01", "monthly_revenue": 843199.17, "mom_growth": -0.269, "growth_direction": "Decline", "volatility_signal": "High swing"},
+        {"month": "2018-01-01", "monthly_revenue": 1078606.86, "mom_growth": 0.2792, "growth_direction": "Growth", "volatility_signal": "High swing"},
+        {"month": "2018-02-01", "monthly_revenue": 966510.88, "mom_growth": -0.1039, "growth_direction": "Decline", "volatility_signal": "Normal movement"},
+        {"month": "2018-03-01", "monthly_revenue": 1120678, "mom_growth": 0.1595, "growth_direction": "Growth", "volatility_signal": "Normal movement"},
+        {"month": "2018-04-01", "monthly_revenue": 1132933.95, "mom_growth": 0.0109, "growth_direction": "Growth", "volatility_signal": "Normal movement"},
+        {"month": "2018-05-01", "monthly_revenue": 1128836.69, "mom_growth": -0.0036, "growth_direction": "Decline", "volatility_signal": "Normal movement"},
+        {"month": "2018-06-01", "monthly_revenue": 1012090.68, "mom_growth": -0.1034, "growth_direction": "Decline", "volatility_signal": "Normal movement"},
+        {"month": "2018-07-01", "monthly_revenue": 1027903.86, "mom_growth": 0.0156, "growth_direction": "Growth", "volatility_signal": "Normal movement"},
+        {"month": "2018-08-01", "monthly_revenue": 985414.28, "mom_growth": -0.0413, "growth_direction": "Decline", "volatility_signal": "Normal movement"}
       ],
       state_revenue: [
-        { customer_state: "SP", total_revenue: 5770266.19, state_rank: 1, revenue_share: 0.3741 },
-        { customer_state: "RJ", total_revenue: 2055690.45, state_rank: 2, revenue_share: 0.1333 },
-        { customer_state: "MG", total_revenue: 1819277.61, state_rank: 3, revenue_share: 0.118 },
-        { customer_state: "RS", total_revenue: 861802.4, state_rank: 4, revenue_share: 0.0559 },
-        { customer_state: "PR", total_revenue: 781919.55, state_rank: 5, revenue_share: 0.0507 },
-        { customer_state: "SC", total_revenue: 595208.4, state_rank: 6, revenue_share: 0.0386 },
-        { customer_state: "BA", total_revenue: 591270.6, state_rank: 7, revenue_share: 0.0383 }
+        {"customer_state": "SP", "total_revenue": 5770266.19, "state_rank": 1, "revenue_share": 0.3741, "concentration_tier": "Core revenue state"},
+        {"customer_state": "RJ", "total_revenue": 2055690.45, "state_rank": 2, "revenue_share": 0.1333, "concentration_tier": "Core revenue state"},
+        {"customer_state": "MG", "total_revenue": 1819277.61, "state_rank": 3, "revenue_share": 0.118, "concentration_tier": "Core revenue state"},
+        {"customer_state": "RS", "total_revenue": 861802.4, "state_rank": 4, "revenue_share": 0.0559, "concentration_tier": "Secondary state"},
+        {"customer_state": "PR", "total_revenue": 781919.55, "state_rank": 5, "revenue_share": 0.0507, "concentration_tier": "Secondary state"},
+        {"customer_state": "SC", "total_revenue": 595208.4, "state_rank": 6, "revenue_share": 0.0386, "concentration_tier": "Secondary state"},
+        {"customer_state": "BA", "total_revenue": 591270.6, "state_rank": 7, "revenue_share": 0.0383, "concentration_tier": "Secondary state"},
+        {"customer_state": "DF", "total_revenue": 346146.17, "state_rank": 8, "revenue_share": 0.0224, "concentration_tier": "Secondary state"},
+        {"customer_state": "GO", "total_revenue": 334294.22, "state_rank": 9, "revenue_share": 0.0217, "concentration_tier": "Secondary state"},
+        {"customer_state": "ES", "total_revenue": 317682.65, "state_rank": 10, "revenue_share": 0.0206, "concentration_tier": "Secondary state"},
+        {"customer_state": "PE", "total_revenue": 309074.59, "state_rank": 11, "revenue_share": 0.02, "concentration_tier": "Long-tail state"},
+        {"customer_state": "CE", "total_revenue": 266463.97, "state_rank": 12, "revenue_share": 0.0173, "concentration_tier": "Long-tail state"},
+        {"customer_state": "PA", "total_revenue": 212027.55, "state_rank": 13, "revenue_share": 0.0137, "concentration_tier": "Long-tail state"},
+        {"customer_state": "MT", "total_revenue": 181441.72, "state_rank": 14, "revenue_share": 0.0118, "concentration_tier": "Long-tail state"},
+        {"customer_state": "MA", "total_revenue": 147807.29, "state_rank": 15, "revenue_share": 0.0096, "concentration_tier": "Long-tail state"},
+        {"customer_state": "PB", "total_revenue": 137834.65, "state_rank": 16, "revenue_share": 0.0089, "concentration_tier": "Long-tail state"},
+        {"customer_state": "MS", "total_revenue": 134421.54, "state_rank": 17, "revenue_share": 0.0087, "concentration_tier": "Long-tail state"},
+        {"customer_state": "PI", "total_revenue": 105272.17, "state_rank": 18, "revenue_share": 0.0068, "concentration_tier": "Long-tail state"},
+        {"customer_state": "RN", "total_revenue": 100728.3, "state_rank": 19, "revenue_share": 0.0065, "concentration_tier": "Long-tail state"},
+        {"customer_state": "AL", "total_revenue": 94195.79, "state_rank": 20, "revenue_share": 0.0061, "concentration_tier": "Long-tail state"},
+        {"customer_state": "SE", "total_revenue": 70289.13, "state_rank": 21, "revenue_share": 0.0046, "concentration_tier": "Long-tail state"},
+        {"customer_state": "TO", "total_revenue": 60007.37, "state_rank": 22, "revenue_share": 0.0039, "concentration_tier": "Long-tail state"},
+        {"customer_state": "RO", "total_revenue": 56975.7, "state_rank": 23, "revenue_share": 0.0037, "concentration_tier": "Long-tail state"},
+        {"customer_state": "AM", "total_revenue": 27596.18, "state_rank": 24, "revenue_share": 0.0018, "concentration_tier": "Long-tail state"},
+        {"customer_state": "AC", "total_revenue": 19586.25, "state_rank": 25, "revenue_share": 0.0013, "concentration_tier": "Long-tail state"},
+        {"customer_state": "AP", "total_revenue": 16141.81, "state_rank": 26, "revenue_share": 0.001, "concentration_tier": "Long-tail state"},
+        {"customer_state": "RR", "total_revenue": 9039.52, "state_rank": 27, "revenue_share": 0.0006, "concentration_tier": "Long-tail state"}
       ],
       customer_decile_summary: [
-        { decile: 1, revenue_share: 0.3825, segment_label: "Decile 1 - Highest spenders" },
-        { decile: 2, revenue_share: 0.1527, segment_label: "Decile 2" },
-        { decile: 3, revenue_share: 0.111, segment_label: "Decile 3" },
-        { decile: 4, revenue_share: 0.0889, segment_label: "Decile 4" },
-        { decile: 5, revenue_share: 0.0724, segment_label: "Decile 5" },
-        { decile: 6, revenue_share: 0.059, segment_label: "Decile 6" },
-        { decile: 7, revenue_share: 0.0474, segment_label: "Decile 7" },
-        { decile: 8, revenue_share: 0.038, segment_label: "Decile 8" },
-        { decile: 9, revenue_share: 0.0289, segment_label: "Decile 9" },
-        { decile: 10, revenue_share: 0.0192, segment_label: "Decile 10" }
+        {"decile": 1, "total_revenue": 5898960, "customer_count": 9335, "revenue_share": 0.3825, "cumulative_customer_share": 0.1, "cumulative_revenue_share": 0.3825, "segment_label": "Decile 1 - Highest spenders"},
+        {"decile": 2, "total_revenue": 2355705.59, "customer_count": 9336, "revenue_share": 0.1527, "cumulative_customer_share": 0.2, "cumulative_revenue_share": 0.5352, "segment_label": "Decile 2"},
+        {"decile": 3, "total_revenue": 1712205.19, "customer_count": 9336, "revenue_share": 0.111, "cumulative_customer_share": 0.3, "cumulative_revenue_share": 0.6463, "segment_label": "Decile 3"},
+        {"decile": 4, "total_revenue": 1371679.5, "customer_count": 9335, "revenue_share": 0.0889, "cumulative_customer_share": 0.4, "cumulative_revenue_share": 0.7352, "segment_label": "Decile 4"},
+        {"decile": 5, "total_revenue": 1116347.68, "customer_count": 9336, "revenue_share": 0.0724, "cumulative_customer_share": 0.5, "cumulative_revenue_share": 0.8076, "segment_label": "Decile 5"},
+        {"decile": 6, "total_revenue": 909688.01, "customer_count": 9336, "revenue_share": 0.059, "cumulative_customer_share": 0.6, "cumulative_revenue_share": 0.8666, "segment_label": "Decile 6"},
+        {"decile": 7, "total_revenue": 730566.66, "customer_count": 9335, "revenue_share": 0.0474, "cumulative_customer_share": 0.7, "cumulative_revenue_share": 0.9139, "segment_label": "Decile 7"},
+        {"decile": 8, "total_revenue": 586116.49, "customer_count": 9336, "revenue_share": 0.038, "cumulative_customer_share": 0.8, "cumulative_revenue_share": 0.9519, "segment_label": "Decile 8"},
+        {"decile": 9, "total_revenue": 445495.31, "customer_count": 9336, "revenue_share": 0.0289, "cumulative_customer_share": 0.9, "cumulative_revenue_share": 0.9808, "segment_label": "Decile 9"},
+        {"decile": 10, "total_revenue": 295697.34, "customer_count": 9336, "revenue_share": 0.0192, "cumulative_customer_share": 1, "cumulative_revenue_share": 1, "segment_label": "Decile 10"}
       ],
       customer_lorenz_curve: [
-        { cumulative_customer_share: 0, cumulative_revenue_share: 0 },
-        { cumulative_customer_share: 0.2, cumulative_revenue_share: 0.0648 },
-        { cumulative_customer_share: 0.4, cumulative_revenue_share: 0.1924 },
-        { cumulative_customer_share: 0.6, cumulative_revenue_share: 0.3548 },
-        { cumulative_customer_share: 0.8, cumulative_revenue_share: 0.6175 },
-        { cumulative_customer_share: 1, cumulative_revenue_share: 1 }
+        {"cumulative_customer_share": 0, "cumulative_revenue_share": 0},
+        {"cumulative_customer_share": 0.01, "cumulative_revenue_share": 0.0012},
+        {"cumulative_customer_share": 0.02, "cumulative_revenue_share": 0.0027},
+        {"cumulative_customer_share": 0.03, "cumulative_revenue_share": 0.0044},
+        {"cumulative_customer_share": 0.04, "cumulative_revenue_share": 0.0062},
+        {"cumulative_customer_share": 0.0501, "cumulative_revenue_share": 0.0082},
+        {"cumulative_customer_share": 0.0601, "cumulative_revenue_share": 0.0102},
+        {"cumulative_customer_share": 0.0701, "cumulative_revenue_share": 0.0123},
+        {"cumulative_customer_share": 0.0801, "cumulative_revenue_share": 0.0145},
+        {"cumulative_customer_share": 0.0901, "cumulative_revenue_share": 0.0168},
+        {"cumulative_customer_share": 0.1001, "cumulative_revenue_share": 0.0192},
+        {"cumulative_customer_share": 0.1101, "cumulative_revenue_share": 0.0217},
+        {"cumulative_customer_share": 0.1201, "cumulative_revenue_share": 0.0243},
+        {"cumulative_customer_share": 0.1301, "cumulative_revenue_share": 0.0269},
+        {"cumulative_customer_share": 0.1401, "cumulative_revenue_share": 0.0297},
+        {"cumulative_customer_share": 0.1502, "cumulative_revenue_share": 0.0325},
+        {"cumulative_customer_share": 0.1602, "cumulative_revenue_share": 0.0354},
+        {"cumulative_customer_share": 0.1702, "cumulative_revenue_share": 0.0385},
+        {"cumulative_customer_share": 0.1802, "cumulative_revenue_share": 0.0416},
+        {"cumulative_customer_share": 0.1902, "cumulative_revenue_share": 0.0448},
+        {"cumulative_customer_share": 0.2002, "cumulative_revenue_share": 0.0481},
+        {"cumulative_customer_share": 0.2102, "cumulative_revenue_share": 0.0515},
+        {"cumulative_customer_share": 0.2202, "cumulative_revenue_share": 0.055},
+        {"cumulative_customer_share": 0.2302, "cumulative_revenue_share": 0.0586},
+        {"cumulative_customer_share": 0.2402, "cumulative_revenue_share": 0.0623},
+        {"cumulative_customer_share": 0.2503, "cumulative_revenue_share": 0.0661},
+        {"cumulative_customer_share": 0.2603, "cumulative_revenue_share": 0.0699},
+        {"cumulative_customer_share": 0.2703, "cumulative_revenue_share": 0.0739},
+        {"cumulative_customer_share": 0.2803, "cumulative_revenue_share": 0.0779},
+        {"cumulative_customer_share": 0.2903, "cumulative_revenue_share": 0.082},
+        {"cumulative_customer_share": 0.3003, "cumulative_revenue_share": 0.0862},
+        {"cumulative_customer_share": 0.3103, "cumulative_revenue_share": 0.0905},
+        {"cumulative_customer_share": 0.3203, "cumulative_revenue_share": 0.0949},
+        {"cumulative_customer_share": 0.3303, "cumulative_revenue_share": 0.0993},
+        {"cumulative_customer_share": 0.3403, "cumulative_revenue_share": 0.1039},
+        {"cumulative_customer_share": 0.3504, "cumulative_revenue_share": 0.1086},
+        {"cumulative_customer_share": 0.3604, "cumulative_revenue_share": 0.1133},
+        {"cumulative_customer_share": 0.3704, "cumulative_revenue_share": 0.1183},
+        {"cumulative_customer_share": 0.3804, "cumulative_revenue_share": 0.1233},
+        {"cumulative_customer_share": 0.3904, "cumulative_revenue_share": 0.1284},
+        {"cumulative_customer_share": 0.4004, "cumulative_revenue_share": 0.1336},
+        {"cumulative_customer_share": 0.4104, "cumulative_revenue_share": 0.139},
+        {"cumulative_customer_share": 0.4204, "cumulative_revenue_share": 0.1444},
+        {"cumulative_customer_share": 0.4304, "cumulative_revenue_share": 0.15},
+        {"cumulative_customer_share": 0.4404, "cumulative_revenue_share": 0.1558},
+        {"cumulative_customer_share": 0.4505, "cumulative_revenue_share": 0.1616},
+        {"cumulative_customer_share": 0.4605, "cumulative_revenue_share": 0.1676},
+        {"cumulative_customer_share": 0.4705, "cumulative_revenue_share": 0.1737},
+        {"cumulative_customer_share": 0.4805, "cumulative_revenue_share": 0.1799},
+        {"cumulative_customer_share": 0.4905, "cumulative_revenue_share": 0.1863},
+        {"cumulative_customer_share": 0.5005, "cumulative_revenue_share": 0.1927},
+        {"cumulative_customer_share": 0.5105, "cumulative_revenue_share": 0.1993},
+        {"cumulative_customer_share": 0.5205, "cumulative_revenue_share": 0.2061},
+        {"cumulative_customer_share": 0.5305, "cumulative_revenue_share": 0.213},
+        {"cumulative_customer_share": 0.5405, "cumulative_revenue_share": 0.22},
+        {"cumulative_customer_share": 0.5506, "cumulative_revenue_share": 0.2272},
+        {"cumulative_customer_share": 0.5606, "cumulative_revenue_share": 0.2345},
+        {"cumulative_customer_share": 0.5706, "cumulative_revenue_share": 0.2419},
+        {"cumulative_customer_share": 0.5806, "cumulative_revenue_share": 0.2495},
+        {"cumulative_customer_share": 0.5906, "cumulative_revenue_share": 0.2573},
+        {"cumulative_customer_share": 0.6006, "cumulative_revenue_share": 0.2653},
+        {"cumulative_customer_share": 0.6106, "cumulative_revenue_share": 0.2734},
+        {"cumulative_customer_share": 0.6206, "cumulative_revenue_share": 0.2817},
+        {"cumulative_customer_share": 0.6306, "cumulative_revenue_share": 0.2901},
+        {"cumulative_customer_share": 0.6406, "cumulative_revenue_share": 0.2987},
+        {"cumulative_customer_share": 0.6507, "cumulative_revenue_share": 0.3075},
+        {"cumulative_customer_share": 0.6607, "cumulative_revenue_share": 0.3165},
+        {"cumulative_customer_share": 0.6707, "cumulative_revenue_share": 0.3257},
+        {"cumulative_customer_share": 0.6807, "cumulative_revenue_share": 0.3351},
+        {"cumulative_customer_share": 0.6907, "cumulative_revenue_share": 0.3446},
+        {"cumulative_customer_share": 0.7007, "cumulative_revenue_share": 0.3544},
+        {"cumulative_customer_share": 0.7107, "cumulative_revenue_share": 0.3644},
+        {"cumulative_customer_share": 0.7207, "cumulative_revenue_share": 0.3746},
+        {"cumulative_customer_share": 0.7307, "cumulative_revenue_share": 0.385},
+        {"cumulative_customer_share": 0.7407, "cumulative_revenue_share": 0.3957},
+        {"cumulative_customer_share": 0.7508, "cumulative_revenue_share": 0.4066},
+        {"cumulative_customer_share": 0.7608, "cumulative_revenue_share": 0.4178},
+        {"cumulative_customer_share": 0.7708, "cumulative_revenue_share": 0.4293},
+        {"cumulative_customer_share": 0.7808, "cumulative_revenue_share": 0.4411},
+        {"cumulative_customer_share": 0.7908, "cumulative_revenue_share": 0.4533},
+        {"cumulative_customer_share": 0.8008, "cumulative_revenue_share": 0.4658},
+        {"cumulative_customer_share": 0.8108, "cumulative_revenue_share": 0.4786},
+        {"cumulative_customer_share": 0.8208, "cumulative_revenue_share": 0.4919},
+        {"cumulative_customer_share": 0.8308, "cumulative_revenue_share": 0.5055},
+        {"cumulative_customer_share": 0.8408, "cumulative_revenue_share": 0.5196},
+        {"cumulative_customer_share": 0.8509, "cumulative_revenue_share": 0.5343},
+        {"cumulative_customer_share": 0.8609, "cumulative_revenue_share": 0.5496},
+        {"cumulative_customer_share": 0.8709, "cumulative_revenue_share": 0.5657},
+        {"cumulative_customer_share": 0.8809, "cumulative_revenue_share": 0.5825},
+        {"cumulative_customer_share": 0.8909, "cumulative_revenue_share": 0.6003},
+        {"cumulative_customer_share": 0.9009, "cumulative_revenue_share": 0.6192},
+        {"cumulative_customer_share": 0.9109, "cumulative_revenue_share": 0.6391},
+        {"cumulative_customer_share": 0.9209, "cumulative_revenue_share": 0.6604},
+        {"cumulative_customer_share": 0.9309, "cumulative_revenue_share": 0.683},
+        {"cumulative_customer_share": 0.9409, "cumulative_revenue_share": 0.7076},
+        {"cumulative_customer_share": 0.9509, "cumulative_revenue_share": 0.7347},
+        {"cumulative_customer_share": 0.961, "cumulative_revenue_share": 0.7658},
+        {"cumulative_customer_share": 0.971, "cumulative_revenue_share": 0.8022},
+        {"cumulative_customer_share": 0.981, "cumulative_revenue_share": 0.8459},
+        {"cumulative_customer_share": 0.991, "cumulative_revenue_share": 0.9032},
+        {"cumulative_customer_share": 1, "cumulative_revenue_share": 1}
       ],
       payment_summary: [
-        { payment_structure: "Installment", total_revenue: 9794985.08, order_count: 49663, order_share: 0.5148, revenue_share: 0.6351 },
-        { payment_structure: "One-time", total_revenue: 5627476.69, order_count: 46814, order_share: 0.4852, revenue_share: 0.3649 }
+        {"payment_structure": "Installment", "total_revenue": 9794985.08, "order_count": 49663, "order_share": 0.5148, "revenue_share": 0.6351},
+        {"payment_structure": "One-time", "total_revenue": 5627476.69, "order_count": 46814, "order_share": 0.4852, "revenue_share": 0.3649}
       ],
       installment_distribution: [
-        { max_installments: 1, revenue_share: 0.3649 }, { max_installments: 2, revenue_share: 0.111 },
-        { max_installments: 3, revenue_share: 0.099 }, { max_installments: 4, revenue_share: 0.076 },
-        { max_installments: 5, revenue_share: 0.082 }, { max_installments: 6, revenue_share: 0.073 },
-        { max_installments: 7, revenue_share: 0.017 }, { max_installments: 8, revenue_share: 0.111 },
-        { max_installments: 10, revenue_share: 0.057 }
+        {"max_installments": 0, "total_revenue": 188.63, "order_count": 2, "revenue_share": 0, "order_share": 0},
+        {"max_installments": 1, "total_revenue": 5627476.69, "order_count": 46814, "revenue_share": 0.3649, "order_share": 0.4852},
+        {"max_installments": 2, "total_revenue": 1543943.92, "order_count": 12026, "revenue_share": 0.1001, "order_share": 0.1247},
+        {"max_installments": 3, "total_revenue": 1456604.42, "order_count": 10133, "revenue_share": 0.0944, "order_share": 0.105},
+        {"max_installments": 4, "total_revenue": 1130643.59, "order_count": 6864, "revenue_share": 0.0733, "order_share": 0.0711},
+        {"max_installments": 5, "total_revenue": 933976.24, "order_count": 5083, "revenue_share": 0.0606, "order_share": 0.0527},
+        {"max_installments": 6, "total_revenue": 797487.65, "order_count": 3792, "revenue_share": 0.0517, "order_share": 0.0393},
+        {"max_installments": 7, "total_revenue": 292537.93, "order_count": 1559, "revenue_share": 0.019, "order_share": 0.0162},
+        {"max_installments": 8, "total_revenue": 1270094.97, "order_count": 4120, "revenue_share": 0.0824, "order_share": 0.0427},
+        {"max_installments": 9, "total_revenue": 122847.56, "order_count": 618, "revenue_share": 0.008, "order_share": 0.0064},
+        {"max_installments": 10, "total_revenue": 2127726.91, "order_count": 5137, "revenue_share": 0.138, "order_share": 0.0532},
+        {"max_installments": 11, "total_revenue": 2763.14, "order_count": 22, "revenue_share": 0.0002, "order_share": 0.0002},
+        {"max_installments": 12, "total_revenue": 41706.98, "order_count": 128, "revenue_share": 0.0027, "order_share": 0.0013},
+        {"max_installments": 13, "total_revenue": 2277.4, "order_count": 15, "revenue_share": 0.0001, "order_share": 0.0002},
+        {"max_installments": 14, "total_revenue": 2496.26, "order_count": 14, "revenue_share": 0.0002, "order_share": 0.0001},
+        {"max_installments": 15, "total_revenue": 31170.53, "order_count": 72, "revenue_share": 0.002, "order_share": 0.0007},
+        {"max_installments": 16, "total_revenue": 1463.47, "order_count": 5, "revenue_share": 0.0001, "order_share": 0.0001},
+        {"max_installments": 17, "total_revenue": 1221.66, "order_count": 7, "revenue_share": 0.0001, "order_share": 0.0001},
+        {"max_installments": 18, "total_revenue": 13235.05, "order_count": 27, "revenue_share": 0.0009, "order_share": 0.0003},
+        {"max_installments": 20, "total_revenue": 10268.55, "order_count": 16, "revenue_share": 0.0007, "order_share": 0.0002},
+        {"max_installments": 21, "total_revenue": 731.1, "order_count": 3, "revenue_share": 0, "order_share": 0},
+        {"max_installments": 22, "total_revenue": 228.71, "order_count": 1, "revenue_share": 0, "order_share": 0},
+        {"max_installments": 23, "total_revenue": 236.48, "order_count": 1, "revenue_share": 0, "order_share": 0},
+        {"max_installments": 24, "total_revenue": 11133.93, "order_count": 18, "revenue_share": 0.0007, "order_share": 0.0002}
       ],
       action_plan: [
-        { priority: 1, action_area: "Revenue calendar", pattern_observation: "Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.", tracking_metric: "Monthly revenue CV (baseline 0.42)" },
-        { priority: 2, action_area: "Regional concentration", pattern_observation: "MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.", tracking_metric: "SP revenue share (baseline 37%)" },
-        { priority: 3, action_area: "Customer concentration", pattern_observation: "Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.", tracking_metric: "Top decile revenue share (baseline 38%)" },
-        { priority: 4, action_area: "Cash collection", pattern_observation: "Installment-share of revenue (~64%) is the dominant cash-timing signal; per-order installment depth (4.12) is modest by Brazilian baseline.", tracking_metric: "Installment revenue share (baseline 64%)" }
+        {"priority": 1, "action_area": "Revenue calendar", "business_question": "Which months create the largest revenue planning risk?", "dashboard_view": "Revenue Stability", "pattern_observation": "Mid-year and January show recurring negative MoM swings; volatility signal flags > 20% MoM moves.", "tracking_metric": "Monthly revenue CV (baseline 0.42)"},
+        {"priority": 2, "action_area": "Regional concentration", "business_question": "Which states are most under-represented relative to economic size?", "dashboard_view": "Geographic Concentration", "pattern_observation": "MG (~12%) and PR (~5%) trail their share of national GDP, indicating under-representation rather than market diversification.", "tracking_metric": "SP revenue share (baseline 37%)"},
+        {"priority": 3, "action_area": "Customer concentration", "business_question": "How dependent is revenue on the highest-value buyers?", "dashboard_view": "Customer Concentration", "pattern_observation": "Top decile holds 38% of revenue; cumulative share reaches ~64% by decile 3, showing a steep concentration curve.", "tracking_metric": "Top decile revenue share (baseline 38%)"},
+        {"priority": 4, "action_area": "Cash collection", "business_question": "How is revenue split between upfront and installment cash inflows?", "dashboard_view": "Cash Flow Timing", "pattern_observation": "Installment-share of revenue (~64%) is the dominant cash-timing signal; per-order installment depth (4.12) is modest by Brazilian baseline.", "tracking_metric": "Installment revenue share (baseline 64%)"}
       ]
     };
 
@@ -737,12 +871,12 @@
       data.forEach((d, index) => {
         const value = Number(d[valueKey]);
         const x = margin.left + (index + 0.15) * (plotW / data.length);
-        const y = value >= 0
-          ? margin.top + plotH - ((value - min) / (max - min || 1)) * plotH
-          : zeroY;
-        const h = Math.max(1, Math.abs(y - zeroY));
+        // Positive bars grow up from the zero line, negative bars grow down from it.
+        const valueY = margin.top + plotH - ((value - min) / (max - min || 1)) * plotH;
+        const y = Math.min(valueY, zeroY);
+        const h = Math.max(1, Math.abs(valueY - zeroY));
         const rect = svgEl("rect", {
-          x, y, width: barW, height: h,
+          x, y, width: Math.max(1, barW), height: h,
           fill: colorFn(d, index),
           rx: 3
         });
@@ -762,41 +896,53 @@
 
     function horizontalBarChart(id, data, labelKey, valueKey, colorFn, options = {}) {
       const { svg, width, height } = clearChart(id);
-      const margin = { top: 12, right: 42, bottom: 18, left: options.left || 54 };
+      const margin = { top: 12, right: options.right || 42, bottom: 18, left: options.left || 54 };
       const plotW = width - margin.left - margin.right;
       const rowH = (height - margin.top - margin.bottom) / data.length;
-      const max = Math.max(...data.map(d => Number(d[valueKey])));
+      const max = options.max || Math.max(...data.map(d => Number(d[valueKey])));
 
       data.forEach((d, index) => {
         const y = margin.top + index * rowH + rowH * 0.18;
         const w = plotW * Number(d[valueKey]) / max;
         addText(svg, d[labelKey], 8, y + rowH * 0.45, "label-text");
-        const rect = svgEl("rect", { x: margin.left, y, width: w, height: rowH * 0.58, fill: colorFn(d, index), rx: 3 });
-        rect.addEventListener("mousemove", event => showTooltip(event, d[labelKey], [
+        const rect = svgEl("rect", { x: margin.left, y, width: Math.max(0, w), height: Math.max(0, rowH * 0.58), fill: colorFn(d, index), rx: 3 });
+        rect.addEventListener("mousemove", event => showTooltip(event, d[labelKey], options.tooltip ? options.tooltip(d) : [
           `Revenue share: ${fmtPct.format(d[valueKey])}`,
           d.total_revenue ? `Revenue: ${fmtCurrency.format(d.total_revenue)}` : ""
         ].filter(Boolean)));
         rect.addEventListener("mouseleave", hideTooltip);
         svg.appendChild(rect);
-        addText(svg, options.format ? options.format(d[valueKey]) : d[valueKey], margin.left + w + 6, y + rowH * 0.45, "axis-text");
+        addText(svg, options.format ? options.format(d[valueKey], d) : d[valueKey], margin.left + w + 6, y + rowH * 0.45, "axis-text");
       });
     }
 
     function scatterLineChart(id, data, color) {
       const { svg, width, height } = clearChart(id);
       const margin = { top: 16, right: 18, bottom: 38, left: 52 };
-      const plotW = width - margin.left - margin.right;
-      const plotH = height - margin.top - margin.bottom;
-      const x = value => margin.left + plotW * Number(value);
-      const y = value => margin.top + plotH - plotH * Number(value);
+      // Square plot so the equality line sits at 45 degrees, centred in the panel.
+      const side = Math.max(0, Math.min(width - margin.left - margin.right, height - margin.top - margin.bottom));
+      const left = Math.max(margin.left, (width - side) / 2);
+      const x = value => left + side * Number(value);
+      const y = value => margin.top + side - side * Number(value);
 
       svg.appendChild(svgEl("line", { x1: x(0), y1: y(0), x2: x(1), y2: y(1), stroke: "#9aa8b5", "stroke-width": 1.5, "stroke-dasharray": "5 5" }));
       const path = data.map((d, index) => `${index === 0 ? "M" : "L"} ${x(d.cumulative_customer_share)} ${y(d.cumulative_revenue_share)}`).join(" ");
       svg.appendChild(svgEl("path", { d: path, fill: "none", stroke: color, "stroke-width": 3 }));
-      addText(svg, "0% customers", margin.left, height - 12);
-      addText(svg, "100% customers", width - margin.right, height - 12, "axis-text", "end");
-      addText(svg, "100% revenue", 8, margin.top + 5);
-      addText(svg, "Equality line", x(0.62), y(0.62) - 8, "axis-text");
+      addText(svg, "0% customers", x(0), margin.top + side + 22);
+      addText(svg, "100% customers", x(1), margin.top + side + 22, "axis-text", "end");
+      addText(svg, "100% revenue", x(0), y(1) + 4, "axis-text");
+      addText(svg, "Equality line", x(0.4) - 8, y(0.4) - 8, "axis-text", "end");
+
+      // Mark where the top 10% of customers begins (90% of customers on the x axis).
+      const p90 = data.reduce((best, d) => Math.abs(d.cumulative_customer_share - 0.9) < Math.abs(best.cumulative_customer_share - 0.9) ? d : best, data[0]);
+      if (p90) {
+        const topShare = 1 - Number(p90.cumulative_revenue_share);
+        const px = x(p90.cumulative_customer_share), py = y(p90.cumulative_revenue_share);
+        svg.appendChild(svgEl("circle", { cx: px, cy: py, r: 5, fill: color }));
+        const label = `Top 10% of customers: ${fmtPct.format(topShare)} of revenue`;
+        if (width - px > 250) addText(svg, label, px + 12, py + 4, "axis-text");  // room on the right
+        else addText(svg, `● ${label}`, x(0), margin.top + side + 46, "axis-text");  // narrow: caption below
+      }
     }
 
     function formatMonth(value) {
@@ -819,9 +965,13 @@
     }
 
     function renderOverview(data) {
-      horizontalBarChart("riskPriorityChart", data.kpi_summary, "risk_dimension", "sort_order",
+      // Bar length = risk level (Moderate / Elevated), not the list position.
+      const levelScore = { Low: 1, Moderate: 2, Elevated: 3 };
+      const riskRows = data.kpi_summary.map(d => ({ ...d, level_score: levelScore[d.risk_level] || 1 }));
+      horizontalBarChart("riskPriorityChart", riskRows, "risk_dimension", "level_score",
         d => d.risk_level === "Elevated" ? "var(--red)" : "var(--amber)",
-        { left: 165, format: value => `Priority ${value}` });
+        { left: 165, right: 76, max: 3, format: (value, d) => d.risk_level,
+          tooltip: d => [d.display_value, `Risk level: ${d.risk_level}`] });
 
       document.getElementById("overviewActions").innerHTML = data.kpi_summary
         .sort((a, b) => a.sort_order - b.sort_order)

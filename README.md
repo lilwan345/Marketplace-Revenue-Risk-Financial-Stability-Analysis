@@ -1,6 +1,11 @@
 # Marketplace Revenue Risk & Financial Stability Analysis
 
-> Quantifying revenue concentration and cash-flow timing across 99,442 Brazilian marketplace orders (2017–2018) using SQL, R, and HTML/JS.
+![SQL](https://img.shields.io/badge/SQL-PostgreSQL-336791)
+![R](https://img.shields.io/badge/R-tidyverse%20%C2%B7%20ggplot2-276dc3)
+[![Dashboard](https://img.shields.io/badge/dashboard-live-0f766e)](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)
+[![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+> Quantifying revenue concentration and cash-flow timing across the 96,477 delivered orders in Olist's public Brazilian e-commerce dataset, using SQL (PostgreSQL), R, and a hand-built HTML/JS dashboard.
 
 **Client dashboard prototype:** [Open Dashboard](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)  
 **Technical report:** [View Full Interactive Report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)
@@ -17,7 +22,7 @@ This project builds a financial risk assessment framework on top of the Brazilia
 |---|---|---|
 | Revenue Stability | CV = 0.42 (raw); MoM growth volatility = 0.32 (detrended) | Moderate volatility; uneven short-term growth |
 | Geographic Concentration | HHI = 0.18 (geographic adaptation) | São Paulo alone drives 37% of total revenue |
-| Customer Concentration | Top decile share = 38% (Gini ≈ 0.48) | Top 10% of customers contribute 38% of revenue |
+| Customer Concentration | Top decile share = 38% (Gini = 0.475) | Top 10% of customers contribute 38% of revenue |
 | Cash Flow Timing | Avg. Installments = 4.12; installment-share ≈ 64% | Installment-heavy mix lengthens the working-capital cycle |
 
 > **Note on the CV metric:** Olist was in a ramp-up phase across 2017–2018, so the raw monthly-revenue CV partly reflects the underlying growth trend rather than pure short-term volatility. The detrended MoM growth volatility (0.32) and the CV of trend-removed residuals (0.18) are reported alongside the raw figure in the [technical report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/).
@@ -48,11 +53,11 @@ The repository ships eight pre-aggregated CSV data marts under [`data/`](data/).
 |---|---|
 | ![Monthly revenue grows steadily through 2017, spikes in late 2017, then plateaus with month-to-month swings through 2018](assets/monthly_revenue_trend.png) | ![Lorenz curve bows substantially below the equality line, indicating that the top decile of customers concentrates a disproportionate share of revenue](assets/customer_lorenz_curve.png) |
 
-*Left: the ramp-up trend that inflates the raw CV (0.42) and motivates reporting a detrended companion (MoM growth volatility 0.32). Right: the Lorenz curve underlying the Gini of 0.48 — the bow away from the diagonal is the customer-concentration signal.*
+*Left: the ramp-up trend that inflates the raw CV (0.42) and motivates reporting a detrended companion (MoM growth volatility 0.32). Right: the Lorenz curve underlying the Gini of 0.475 — the bow away from the diagonal is the customer-concentration signal.*
 
 - **Revenue is volatile short-term**: CV of 0.42 and uneven month-over-month growth indicate unstable performance, despite an overall upward trend from 2017 to 2018.
 - **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI on state-level revenue shares lands at 0.18, signalling meaningful but non-extreme concentration. (HHI is adapted here from its antitrust convention, where it scores firm market shares; the antitrust interpretive bands are not directly transferable to geographic revenue shares, so the value is reported descriptively rather than benchmarked against a regulatory threshold.)
-- **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top three deciles contribute ~64%. The Lorenz curve and Gini coefficient (0.48) confirm high revenue inequality.
+- **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top three deciles contribute ~64%. The Lorenz curve and Gini coefficient (0.475) confirm high revenue inequality.
 - **Installment payment mix lengthens the working-capital cycle**: ~64% of revenue comes from installment orders, with a revenue-weighted average of 4.12 installments per order. The 4.12 figure is modest within Brazil's "12x sem juros" cultural baseline; the dominant cash-timing signal is the installment-share of revenue, not the per-order installment depth.
 
 ---
@@ -81,6 +86,8 @@ The repository ships eight pre-aggregated CSV data marts under [`data/`](data/).
 ├── index.html            # Rendered GitHub Pages report
 ├── dashboard.html        # Client-facing dashboard prototype
 ├── project.sql           # SQL views for data preparation
+├── tools/
+│   └── sync_dashboard_fallback.py  # copies data/*.csv into the dashboard's offline fallback
 ├── data/                 # Pre-aggregated CSV data marts (dashboard data source)
 │   ├── kpi_summary.csv
 │   ├── monthly_revenue.csv
@@ -103,7 +110,7 @@ The repository ships eight pre-aggregated CSV data marts under [`data/`](data/).
 
 The raw `olist_orders_dataset.csv`, `olist_customers_dataset.csv`, and `olist_order_payments_dataset.csv` files are not tracked in this repo. Download them from the [Kaggle dataset page](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) and place all three in the repository root.
 
-The pre-aggregated data marts under [`data/`](data/) are committed to the repository, so the dashboard runs as-is with no database setup. To regenerate the underlying analysis from raw data, follow the full path below.
+The pre-aggregated data marts under [`data/`](data/) are committed to the repository, so the dashboard runs as-is with no database setup. Serve the folder (`python3 -m http.server`) and open `dashboard.html`; opened straight from disk it uses an inline copy of the same data, kept identical by `python3 tools/sync_dashboard_fallback.py`. To regenerate the underlying analysis from raw data, follow the full path below.
 
 **Full path — regenerate the technical report (PostgreSQL required):**
 
@@ -131,7 +138,7 @@ R package dependencies are listed at the top of [`Analysis.Rmd`](Analysis.Rmd): 
 
 ## Data Source
 
-[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — 99,442 orders from September 2016 to August 2018, covering order details, customer locations, and payment structures.
+[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — 99,441 orders from September 2016 to October 2018 (96,477 of them delivered with payment records, which is the base for every figure here), covering order details, customer locations, and payment structures.
 
 > **Analysis window:** The raw dataset spans September 2016 to August 2018, but late-2016 contains only a partial month of activity. The analysis filters to orders with `order_purchase_timestamp >= 2017-01-01` so the monthly-revenue series, CV, and MoM growth volatility are measured on full months only. Headline figures throughout the report reference the 2017–2018 analysis window.
 

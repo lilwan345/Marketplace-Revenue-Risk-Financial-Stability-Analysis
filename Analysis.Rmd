@@ -263,7 +263,7 @@ The revenue-weighted average installment count is approximately `r round(weighte
 
 ## Final Summary
 
-This analysis quantified four dimensions of financial risk on the Olist Brazilian e-commerce dataset (99,442 orders, 2016–2018):
+This analysis quantified four dimensions of financial risk on the Olist Brazilian e-commerce dataset (99,441 orders, 2016–2018; 96,477 delivered):
 
 - **Revenue Stability**: Moderate volatility (raw CV = 0.42; detrended MoM growth volatility = 0.32, since the raw CV partly reflects ramp-up trend rather than pure volatility) with uneven short-term growth
 - **Geographic Concentration**: SP drives 37% of revenue (HHI = 0.18 — adapted from antitrust convention to state-level shares), creating regional exposure
@@ -282,6 +282,6 @@ This section reframes the analytical findings into observable patterns and the b
 
 - **Geographic concentration (HHI = 0.18, SP = 37%)**: SP's 37% share creates regional exposure; logistics, economic, or regulatory shocks in São Paulo would be transmitted disproportionately to the full P&L. MG (~12%) and PR (~5%) appear under-represented relative to their share of national GDP (MG ≈ 9% of Brazilian GDP, PR ≈ 6%), making them the two most observable diversification gaps in the data. The pattern raises a question rather than prescribing an answer: is the under-representation a demand-side gap (untapped buyers) or a supply-side gap (insufficient sellers)? The dataset itself cannot distinguish the two.
 
-- **Customer concentration (Gini = 0.475)**: The Lorenz curve's deviation from equality is driven primarily by the top two deciles, which together hold roughly 52% of revenue. The top decile alone holds 38%; losing the top 1% of customers would shift the revenue base by a measurable margin. The pattern surfaces a retention-sensitivity question — at what churn rate among the top decile would the overall revenue base materially shift? — but the dataset does not contain churn observations, so this remains a hypothesis worth testing with longitudinal data the marketplace owns.
+- **Customer concentration (Gini = 0.475)**: The Lorenz curve's deviation from equality is driven primarily by the top two deciles, which together hold roughly 54% of revenue. The top decile alone holds 38%; losing the top 1% of customers would shift the revenue base by a measurable margin. The pattern surfaces a retention-sensitivity question — at what churn rate among the top decile would the overall revenue base materially shift? — but the dataset does not contain churn observations, so this remains a hypothesis worth testing with longitudinal data the marketplace owns.
 
 - **Cash flow timing (Avg installments = 4.12, installment revenue share ≈ 64%)**: The per-order installment depth (4.12) is modest within Brazil's "12x sem juros" baseline; the dominant cash-timing signal is the share of revenue routed through installments (~64%), which lengthens the working-capital cycle relative to upfront-paid revenue. The observation worth raising: cash collection timing is structurally driven by payment-channel mix, so the installment-share trend is the more informative signal for working-capital sizing than the headcount of installment orders.
