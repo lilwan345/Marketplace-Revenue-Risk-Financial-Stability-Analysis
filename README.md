@@ -1,151 +1,120 @@
-# Marketplace Revenue Risk & Financial Stability Analysis
+# Marketplace Revenue Risk: Olist
 
-![SQL](https://img.shields.io/badge/SQL-PostgreSQL-336791)
-![R](https://img.shields.io/badge/R-tidyverse%20%C2%B7%20ggplot2-276dc3)
 [![Dashboard](https://img.shields.io/badge/dashboard-live-0f766e)](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)
+[![Report](https://img.shields.io/badge/report-HTML-336791)](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)
 [![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-> Quantifying revenue concentration and cash-flow timing across the 96,477 delivered orders in Olist's public Brazilian e-commerce dataset, using SQL (PostgreSQL), R, and a hand-built HTML/JS dashboard.
+How steady is a marketplace's revenue, how much of it depends on a few places
+and a few big orders, and how long does the money take to arrive? I measured
+all four on **96,477 delivered orders from Olist**, a Brazilian online
+marketplace (2016–2018), using SQL (PostgreSQL) and R, and put the results in
+a small dashboard that runs in the browser.
 
-**Client dashboard prototype:** [Open Dashboard](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)  
-**Technical report:** [View Full Interactive Report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)
+**[Open the dashboard](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/dashboard.html)** ·
+**[Read the full report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/)**
 
----
-
-## What This Project Does
-
-This project builds a financial risk assessment framework on top of the Brazilian E-Commerce Public Dataset (Olist, 2016–2018). It identifies and quantifies four dimensions of revenue risk that matter to marketplace businesses, then packages the results into a client-facing interactive dashboard.
-
-**Why this dataset:** Olist is one of the few publicly available marketplace datasets that combines order-level grain with installment payment data and customer-state metadata. That combination is what allows a multi-dimensional financial risk framework — drop the installment column and the cash-flow timing dimension collapses; drop the state column and the geographic concentration dimension collapses. The framework itself is dataset-agnostic and ports directly to any marketplace with comparable transaction-level data.
-
-| Risk Dimension | Key Metric | Finding |
-|---|---|---|
-| Revenue Stability | CV = 0.42 (raw); MoM growth volatility = 0.32 (detrended) | Moderate volatility; uneven short-term growth |
-| Geographic Concentration | HHI = 0.18 (geographic adaptation) | São Paulo alone drives 37% of total revenue |
-| Customer Concentration | Top decile share = 38% (Gini = 0.475) | Top 10% of customers contribute 38% of revenue |
-| Cash Flow Timing | Avg. Installments = 4.12; installment-share ≈ 64% | Installment-heavy mix lengthens the working-capital cycle |
-
-> **Note on the CV metric:** Olist was in a ramp-up phase across 2017–2018, so the raw monthly-revenue CV partly reflects the underlying growth trend rather than pure short-term volatility. The detrended MoM growth volatility (0.32) and the CV of trend-removed residuals (0.18) are reported alongside the raw figure in the [technical report](https://lilwan345.github.io/Marketplace-Revenue-Risk-Financial-Stability-Analysis/).
-
-> Bottom line: The data surfaces four observable patterns worth further investigation — revenue volatility around mid-year and post-holiday windows, geographic dependency on São Paulo with MG/PR under-represented vs. their GDP share, revenue concentration in the top customer decile, and cash-flow timing driven by the installment-share of revenue. Each is quantified above and discussed in context in the report.
-
----
-
-## Dashboard Data Marts
-
-The repository ships eight pre-aggregated CSV data marts under [`data/`](data/). The interactive [`dashboard.html`](dashboard.html) loads them directly in the browser (vanilla JS + SVG), and any analyst can also open them in their BI tool of choice.
-
-| Asset | Purpose |
+| Monthly revenue, 2017–2018 | How concentrated revenue is (Lorenz curve) |
 |---|---|
-| [`dashboard.html`](dashboard.html) | Client-facing interactive dashboard prototype for GitHub Pages |
-| [`data/monthly_revenue.csv`](data/monthly_revenue.csv) | Monthly revenue trend, MoM growth, and volatility flags |
-| [`data/state_revenue.csv`](data/state_revenue.csv) | State-level revenue concentration and ranking |
-| [`data/customer_decile_summary.csv`](data/customer_decile_summary.csv) | Revenue concentration by customer decile |
-| [`data/customer_lorenz_curve.csv`](data/customer_lorenz_curve.csv) | Lorenz curve points for customer concentration |
-| [`data/payment_summary.csv`](data/payment_summary.csv) | One-time vs installment revenue exposure |
-| [`data/installment_distribution.csv`](data/installment_distribution.csv) | Revenue distribution by installment count |
-| [`data/kpi_summary.csv`](data/kpi_summary.csv) | Executive KPI cards with client-friendly explanations |
-| [`data/action_plan.csv`](data/action_plan.csv) | Suggested action areas and tracking metrics |
+| ![Monthly revenue climbs steeply through 2017, then levels off near one million reais a month in 2018](assets/monthly_revenue_trend.png) | ![The Lorenz curve bows well below the equality line: a small share of orders brings in a large share of revenue](assets/customer_lorenz_curve.png) |
 
-## Key Findings
+## What I found
 
-| Monthly Revenue Trend (2017–2018) | Customer Revenue Distribution (Lorenz) |
-|---|---|
-| ![Monthly revenue grows steadily through 2017, spikes in late 2017, then plateaus with month-to-month swings through 2018](assets/monthly_revenue_trend.png) | ![Lorenz curve bows substantially below the equality line, indicating that the top decile of customers concentrates a disproportionate share of revenue](assets/customer_lorenz_curve.png) |
+| Risk | Measure | Result | In plain words |
+|---|---|---|---|
+| **Revenue swings** | Coefficient of variation (CV) of monthly revenue | 0.42 | Monthly revenue moves around a lot. But Olist was still growing fast in 2017, and growth alone makes this number look bigger. With the growth trend taken out, month-to-month swings are smaller (growth volatility 0.32). |
+| **Depends on one state** | Each state's share of revenue | São Paulo 37%, Rio 13%, Minas Gerais 12% | More than a third of revenue comes from one state. |
+| **Depends on big orders** | Share of revenue from the top 10% of orders; Gini | 38%; Gini 0.475 | The top 10% bring in 38% of revenue, the top 30% about 64%. (See the note below on what "customer" means here.) |
+| **Money arrives late** | Share of revenue paid in installments | about 64%, averaging 4.12 installments | Most revenue is paid over several months, so cash comes in well after the sale. Brazilian shoppers are used to up to 12 interest-free installments, so 4.12 is not high; what matters is how much revenue is paid this way. |
 
-*Left: the ramp-up trend that inflates the raw CV (0.42) and motivates reporting a detrended companion (MoM growth volatility 0.32). Right: the Lorenz curve underlying the Gini of 0.475 — the bow away from the diagonal is the customer-concentration signal.*
+**What the measures mean**
 
-- **Revenue is volatile short-term**: CV of 0.42 and uneven month-over-month growth indicate unstable performance, despite an overall upward trend from 2017 to 2018.
-- **São Paulo dominates geographically**: SP contributes ~37% of revenue, followed by RJ (~13%) and MG (~12%). HHI on state-level revenue shares lands at 0.18, signalling meaningful but non-extreme concentration. (HHI is adapted here from its antitrust convention, where it scores firm market shares; the antitrust interpretive bands are not directly transferable to geographic revenue shares, so the value is reported descriptively rather than benchmarked against a regulatory threshold.)
-- **A small customer base drives most revenue**: The top decile alone accounts for 38% of revenue; the top three deciles contribute ~64%. The Lorenz curve and Gini coefficient (0.475) confirm high revenue inequality.
-- **Installment payment mix lengthens the working-capital cycle**: ~64% of revenue comes from installment orders, with a revenue-weighted average of 4.12 installments per order. The 4.12 figure is modest within Brazil's "12x sem juros" cultural baseline; the dominant cash-timing signal is the installment-share of revenue, not the per-order installment depth.
+- **CV**: the standard deviation of monthly revenue divided by its average.
+  0 means every month is the same; higher means bumpier.
+- **Gini**: 0 means every order is the same size, 1 means one order is
+  everything.
+- **HHI** (in the report): add up the squares of each state's revenue share.
+  It is 0.18 here; 1 would mean all revenue comes from a single state. I use it
+  only to describe the spread, not against any official threshold.
 
----
+### A note on "customers"
 
-## Tools & Methods
+Olist gives every order its own `customer_id`; the ID that follows a real person
+across orders is `customer_unique_id`. My SQL groups by `customer_id`, so the
+"customer" deciles in the dashboard and report really rank **orders** by value.
+Almost all Olist buyers order only once (about 97%), so the picture is close,
+but grouping by `customer_unique_id` is the correct version and the next fix.
 
-**SQL (PostgreSQL)**
-- Constructed modular views for financial orders, state revenue, customer deciles, and payment structure
-- Applied window functions (NTILE, SUM OVER) for segmentation and ranking
+## The dashboard
 
-**R (RMarkdown)**
-- Computed four non-overlapping risk metrics so each maps to a distinct dimension of marketplace revenue risk: CV for revenue stability, HHI (geographic adaptation) for state-level concentration, Gini for customer-level concentration, and revenue-weighted installment count for cash-flow timing
-- Reported a detrended companion to the raw CV (MoM growth volatility, residual CV after linear detrending) so the headline volatility figure is not inflated by the 2017–2018 ramp-up trend
-- Visualized trends with ggplot2: line charts, bar charts, and Lorenz curve
+[`dashboard.html`](dashboard.html) is one HTML file (plain JavaScript and SVG,
+no libraries) that reads eight small CSV files from [`data/`](data/): the KPI
+cards, monthly revenue, revenue by state, the decile summary, the Lorenz
+curve, the payment mix, the installment distribution and a short action list.
+Anyone can open the same CSVs in Excel or a BI tool.
 
-**HTML/JS dashboard prototype**
-- Exported KPI, trend, concentration, cash-flow timing, and action-plan datasets as standalone CSVs under `data/`
-- Built `dashboard.html` directly (vanilla JS + SVG), so reviewers can interact with the deliverable without installing any BI tool
+## How it works
 
----
+1. **SQL (PostgreSQL)** builds one clean table of delivered orders (order
+   value, state, installments), then views for revenue by state, by month and by
+   decile ([`project.sql`](project.sql)). Deciles use `NTILE(10)`.
+2. **R** ([`Analysis.Rmd`](Analysis.Rmd)) computes the four measures, the
+   growth-adjusted swing numbers, and the charts (ggplot2), and renders the
+   report.
+3. **The dashboard** reads the exported CSVs.
 
-## Project Structure
+## Run it
 
-```
-├── Analysis.Rmd          # Main analysis (R Markdown source)
-├── index.html            # Rendered GitHub Pages report
-├── dashboard.html        # Client-facing dashboard prototype
-├── project.sql           # SQL views for data preparation
-├── tools/
-│   └── sync_dashboard_fallback.py  # copies data/*.csv into the dashboard's offline fallback
-├── data/                 # Pre-aggregated CSV data marts (dashboard data source)
-│   ├── kpi_summary.csv
-│   ├── monthly_revenue.csv
-│   ├── state_revenue.csv
-│   ├── customer_decile_summary.csv
-│   ├── customer_lorenz_curve.csv
-│   ├── payment_summary.csv
-│   ├── installment_distribution.csv
-│   └── action_plan.csv
-└── assets/                # README chart exports
+**Just the dashboard:** the CSVs are already in the repo.
+
+```bash
+python3 -m http.server     # then open http://localhost:8000/dashboard.html
 ```
 
-> The three raw Olist source files (`olist_orders_dataset.csv`, `olist_customers_dataset.csv`, `olist_order_payments_dataset.csv`) are intentionally not tracked in git — they come from the public Kaggle dataset (see [Data Source](#data-source)). Download them once into the repo root and the analysis runs from there.
+Opened straight from disk, the dashboard falls back to a built-in copy of the
+same data; `python3 tools/sync_dashboard_fallback.py` keeps that copy in sync
+with `data/`.
 
----
+**The whole analysis** (needs PostgreSQL and R):
 
-## How to Reproduce
-
-**Step 0 — download the raw Olist files (one-time):**
-
-The raw `olist_orders_dataset.csv`, `olist_customers_dataset.csv`, and `olist_order_payments_dataset.csv` files are not tracked in this repo. Download them from the [Kaggle dataset page](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) and place all three in the repository root.
-
-The pre-aggregated data marts under [`data/`](data/) are committed to the repository, so the dashboard runs as-is with no database setup. Serve the folder (`python3 -m http.server`) and open `dashboard.html`; opened straight from disk it uses an inline copy of the same data, kept identical by `python3 tools/sync_dashboard_fallback.py`. To regenerate the underlying analysis from raw data, follow the full path below.
-
-**Full path — regenerate the technical report (PostgreSQL required):**
-
-1. Import the three raw CSVs into PostgreSQL as tables named `olist_orders_dataset`, `olist_customers_dataset`, and `olist_order_payments_dataset`.
-2. Run [`project.sql`](project.sql) against that database to create the analytical views (`financial_orders`, `state_revenue`, `customer_revenue`, `customer_revenue_decile`, `order_payment_structure`, `monthly_revenue`).
-3. Configure the database connection. The R chunk in [`Analysis.Rmd`](Analysis.Rmd) reads connection parameters from environment variables, with the author's local defaults as fallbacks:
-
-   | Variable | Default | Purpose |
-   |---|---|---|
-   | `OLIST_DB_NAME` | `leowan34` | PostgreSQL database name |
-   | `OLIST_DB_HOST` | `localhost` | PostgreSQL host |
-   | `OLIST_DB_PORT` | `5332` | PostgreSQL port |
-   | `OLIST_DB_USER` | `leowan34` | PostgreSQL user |
-   | `PG_PASSWORD` | (required) | PostgreSQL password |
-
+1. Download `olist_orders_dataset.csv`, `olist_customers_dataset.csv` and
+   `olist_order_payments_dataset.csv` from
+   [Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) and
+   load them into PostgreSQL as tables with the same names (without `.csv`).
+2. Run [`project.sql`](project.sql) to create the views.
+3. Set `PG_PASSWORD` (and, if yours differ from the defaults in
+   `Analysis.Rmd`, `OLIST_DB_NAME`, `OLIST_DB_HOST`, `OLIST_DB_PORT`,
+   `OLIST_DB_USER`).
 4. Render the report:
 
    ```r
    Rscript -e 'rmarkdown::render("Analysis.Rmd", output_file = "index.html")'
    ```
 
-R package dependencies are listed at the top of [`Analysis.Rmd`](Analysis.Rmd): `DBI`, `RPostgres`, `ggplot2`, `dplyr`, `ineq`.
+   R packages: `DBI`, `RPostgres`, `ggplot2`, `dplyr`, `ineq`.
+
+## Files
+
+```
+project.sql       SQL views: clean orders, revenue by state, month and decile
+Analysis.Rmd      the analysis in R; renders index.html (the report)
+dashboard.html    the browser dashboard
+data/             the eight CSVs the dashboard reads
+tools/            sync_dashboard_fallback.py (keeps the dashboard's offline copy in sync)
+assets/           the two charts above
+```
+
+## Data
+
+[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce):
+99,441 orders placed between September 2016 and October 2018. I keep the 96,477
+that were delivered and have payment records. The monthly charts and the swing
+numbers start in January 2017, because 2016 has only a few sparse months, and
+the last full month of delivered orders is August 2018.
+
+The numbers describe this marketplace in this period. Installment habits in
+particular are Brazilian, so they shouldn't be compared directly with U.S.
+benchmarks.
 
 ---
 
-## Data Source
-
-[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — 99,441 orders from September 2016 to October 2018 (96,477 of them delivered with payment records, which is the base for every figure here), covering order details, customer locations, and payment structures.
-
-> **Analysis window:** The raw dataset spans September 2016 to August 2018, but late-2016 contains only a partial month of activity. The analysis filters to orders with `order_purchase_timestamp >= 2017-01-01` so the monthly-revenue series, CV, and MoM growth volatility are measured on full months only. Headline figures throughout the report reference the 2017–2018 analysis window.
-
-> **Note:** Findings are specific to this time period and market context; some metrics (e.g. average installment count) should be read against the local "12x sem juros" baseline rather than U.S. benchmarks. The framework itself is portable to other marketplaces with comparable transaction-level data.
-
----
-
-## Author
-
-**Liyuan Wan** · [GitHub](https://github.com/lilwan345)
+Built by **Liyuan Wan** · [GitHub](https://github.com/lilwan345)
